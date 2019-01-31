@@ -1,0 +1,25 @@
+{
+  "name": "forestguide",
+  "version": "0.0.1",
+  "main": "dist/forestguide.js",
+  "description": "Guides you narratively through an app",
+  "repository": "https://github.com/julesgraus/forestguide.git",
+  "author": "Jules Graus <jules.graus@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"No tests available. Mayby in the future.\" && exit 1",
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "7",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1"
+  },
+  "dependencies": {
+    "forestguide": "^0.0.1",
+    "uglifyjs-webpack-plugin": "^2.1.1"
+  }
+}
