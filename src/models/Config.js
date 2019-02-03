@@ -1,8 +1,12 @@
+/**
+ * The config object holds configuration data for ForestGuide itself.
+ * It does not contain guidance data.
+ */
 export default class Config {
     constructor(configObject) {
         if(typeof configObject === 'undefined') configObject = {};
 
-        this._rootUrl = configObject.hasOwnProperty('rootUrl') ? configObject.rootUrl : 'forestguide';
+        this._rootUrl = configObject.hasOwnProperty('rootUrl') || typeof configObject.rootUrl !== "string" ? configObject.rootUrl : 'forestguide';
     }
 
     /**
@@ -10,7 +14,7 @@ export default class Config {
      *
      * @returns {string}
      */
-    getRootUrl() {
+    get rootUrl() {
         return this._rootUrl;
     }
 }
