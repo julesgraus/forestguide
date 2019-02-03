@@ -19,7 +19,6 @@
     "webpack-cli": "^3.2.1"
   },
   "dependencies": {
-    "forestguide": "^0.0.1",
     "uglifyjs-webpack-plugin": "^2.1.1"
   }
 }
