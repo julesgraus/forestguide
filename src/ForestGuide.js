@@ -62,13 +62,17 @@ export default class ForestGuide {
 
         let guideName = button.dataset[this._camelCasedGuideDataAttributeName];
 
-        this._dataRetriever.get(this._config.getRootUrl()+guideName+'.json').then(function(response) {
+        this._dataRetriever.get(this._config.rootUrl+guideName+'.json').then(function(response) {
+            let json = {};
             try {
-                let guideModel = Guide.fromJson(JSON.parse(response));
-                this._startOrStopGuidance(guideModel);
+                json = JSON.parse(response);
             } catch (e) {
-                console.error('ForestGuide: The json as denoted in the guide "'+guideName+'" was invalid.');
+                console.error('ForestGuide: The json as denoted in the guide "'+guideName+'" was invalid. '+e.message);
+                return;
             }
+
+            let guideModel = Guide.fromJson(json);
+            self._startOrStopGuidance(guideModel);
         }).catch(function(reason) {
             console.error('ForestGuide: Could not retrieve guide "'+guideName+'" because of an error: '+reason);
         })

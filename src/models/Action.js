@@ -33,6 +33,7 @@ export default class Action {
      * @param object
      */
     static validate(object) {
+        if(typeof object === "undefined") return "Action: The action is not valid because it was undefined";
         if (!object.hasOwnProperty('type') || typeof object.type !== "string") return "Action: The action was not valid. It must contain a string property called type";
         if (!object.hasOwnProperty('options') || typeof object.options !== "object") return "Action: The action was not valid. It must contain an object property called options";
 

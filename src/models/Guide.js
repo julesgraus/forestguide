@@ -35,6 +35,7 @@ export default class Guide {
      * @return {boolean|string}
      */
      static validate(object) {
+        if(typeof object === "undefined") return "Guide: The guide is not valid because it was undefined";
         if(!object.hasOwnProperty("soundFile") || typeof object.soundFile !== "string") return "Guide: The guide is not valid. It must have a string property called soundFile.";
         if(!object.hasOwnProperty("cues") || !Array.isArray(object.cues)) return "Guide: The guide is not valid. It must have an array property called 'cues'";
 

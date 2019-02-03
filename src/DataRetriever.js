@@ -6,10 +6,12 @@
 export default class DataRetriever {
     constructor()
     {
+        //Initialize vars
         this._headers  = {};
         this._request = null;
         this._username = null;
         this._password = null;
+        this._responseType = 'text';
     }
 
     /**
@@ -45,8 +47,11 @@ export default class DataRetriever {
 
         this._request.open(method.toUpperCase(), url, true, self._username, self._password);
         for(let headerName in self._headers) {
+            if(!self._headers.hasOwnProperty(headerName)) continue;
             this._request.setRequestHeader(headerName, self._headers[headerName]);
         }
+
+        this._request.responseType = this._responseType;
     }
 
     /**
@@ -83,6 +88,18 @@ export default class DataRetriever {
     }
 
     /**
+     * Set the expected response type
+     */
+    setResponseType(type = 'text') {
+        let supportedTypes = ['text', 'arraybuffer', 'blob', 'document'];
+
+        if(typeof type !== "string" || supportedTypes.indexOf(type) === -1) {
+            console.log('Dataretriever:setResponseType: The type was not valid. It must be one of these: '+supportedTypes.join(', '));
+        }
+        this._responseType = type;
+    }
+
+    /**
      * Removes all headers you've set with setHeader
      *
      * @return DataRetriever
@@ -108,7 +125,7 @@ export default class DataRetriever {
      *
      * @param value
      */
-    setUsername(value) {
+    set username(value) {
         if(typeof value !== "string") {
             console.error('DataRetriever:setUsername The username must be a string');
             return;
@@ -121,7 +138,7 @@ export default class DataRetriever {
      *
      * @param value
      */
-    setPassword(value) {
+    set password(value) {
         if(typeof value !== "string") {
             console.error('DataRetriever:setPassword The password must be a string');
             return;

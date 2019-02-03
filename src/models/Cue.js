@@ -40,6 +40,7 @@ export default class Cue {
      * @param object
      */
     static validate(object) {
+        if(typeof object === "undefined") return "Cue: The cue is not valid because it was undefined";
         if (!object.hasOwnProperty('start') || typeof object.start !== "number") return "Cue: The cue was not valid. It must contain a number property called start";
         if (!object.hasOwnProperty('end') || typeof object.end !== "number") return "Cue: The cue was not valid. It must contain a number property called end";
         if (!object.hasOwnProperty('selector') || typeof object.selector !== "string") return "Cue: The cue was not valid. It must contain a string property called selector";
