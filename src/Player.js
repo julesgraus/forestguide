@@ -72,6 +72,7 @@ class Player {
 
         this._source = this._audioContext.createBufferSource(); //Create the sound source
         this._source.buffer = this._audioBuffer; //Tell the source which sound it must play. E.g. the loaded one in the buffer.
-        this._source.connect(this._audioContext.destination) //Conect the source to the destination, which are usually the speakers of the computer.
+        this._source.connect(this._audioContext.destination); //Connect the source to the destination, which are usually the speakers of the computer.
+        this._source.play(start);
     }
 }
