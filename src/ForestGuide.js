@@ -1,3 +1,4 @@
+import AudioPlayer from './AudioPlayer';
 import Config from './models/Config';
 import DataRetriever from './DataRetriever';
 import Guide from './models/Guide';
@@ -16,6 +17,7 @@ export default class ForestGuide {
         //Initialize dependencies
         this._dataRetriever = new DataRetriever();
         this._config = new Config(config);
+        this._audioPlayer = new AudioPlayer();
 
         //initialize scalar variables
         this._guideDataAttributeName = 'forest-guide';
@@ -72,7 +74,7 @@ export default class ForestGuide {
             }
 
             let guideModel = Guide.fromJson(json);
-            self._startOrStopGuidance(guideModel);
+            self._startOrStopGuidance(guideModel, button);
         }).catch(function(reason) {
             console.error('ForestGuide: Could not retrieve guide "'+guideName+'" because of an error: '+reason);
         })
@@ -82,8 +84,28 @@ export default class ForestGuide {
      * @param {Guide} guide
      * @private
      */
-    _startOrStopGuidance(guide) {
-        console.log(guide);
+    _startOrStopGuidance(guide, button) {
+        console.log('starting', guide);
+        let self = this;
+        this._audioPlayer.onLoading(function() {
+            console.log('Loading');
+            console.log('Is playing: ', self._audioPlayer.isPlaying());
+        }).onCanPlay(function() {
+            console.log('Is playing: ', self._audioPlayer.isPlaying());
+            self._audioPlayer.play();
+        }).onPause(function() {
+            console.log('Pause');
+            console.log('Is playing: ', self._audioPlayer.isPlaying());
+        }).onPlayProgress(function() {
+            console.log(self._audioPlayer.getCurrentTime(), self._audioPlayer.isPlaying());
+        }).onFinish(function() {
+            console.log('Finish');
+            console.log('Is playing: ', self._audioPlayer.isPlaying());
+        }).onStopped(function() {
+            console.log('Stopped');
+            console.log('Is playing: ', self._audioPlayer.isPlaying());
+        });
+        this._audioPlayer.load(this._config.rootUrl+guide.soundFile);
     }
 }
 

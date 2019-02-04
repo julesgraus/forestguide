@@ -6,7 +6,8 @@ export default class Config {
     constructor(configObject) {
         if(typeof configObject === 'undefined') configObject = {};
 
-        this._rootUrl = configObject.hasOwnProperty('rootUrl') || typeof configObject.rootUrl !== "string" ? configObject.rootUrl : 'forestguide';
+        this._rootUrl = configObject.hasOwnProperty('rootUrl') || typeof configObject.rootUrl !== "string" ? configObject.rootUrl : 'forestguide/';
+        if(this._rootUrl.substr(this.rootUrl.length -1) !== '/') this._rootUrl += '/';
     }
 
     /**

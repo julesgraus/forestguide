@@ -10,7 +10,7 @@ export default class CalbackMapper {
      */
     constructor() {
         this._callbackMap = {};
-        this._argumentsMap = {};
+        this._argsMap = {};
     }
 
     /**
@@ -19,9 +19,9 @@ export default class CalbackMapper {
      *
      * @param  {string} action
      * @param {function} callback
-     * @param {array} arguments
+     * @param {array} args
      */
-    on(action, callback, arguments = []) {
+    on(action, callback, args = []) {
         if(typeof action !== "string") {
             console.error('CallbackMapper: not registering callback since the action is not a string');
             return;
@@ -30,16 +30,15 @@ export default class CalbackMapper {
             console.error('CallbackMapper: not registering callback since the callback is not a function');
             return;
         }
-        if(!Array.isArray(arguments)) {
-            console.error('CallbackMapper: not registering callback since the arguments parameter is not an array');
+        if(!Array.isArray(args)) {
+            console.error('CallbackMapper: not registering callback since the args parameter is not an array');
             return;
         }
-
         if(!this._callbackMap.hasOwnProperty(action)) this._callbackMap[action] = [];
-        if(!this._argumentsMap.hasOwnProperty(action)) this._argumentsMap[action] = [];
+        if(!this._argsMap.hasOwnProperty(action)) this._argsMap[action] = [];
 
-        this._callbackMap[action][this._callbackMap.length] = callback;
-        this._argumentsMap[action][this._argumentsMap.length] = arguments;
+        this._callbackMap[action].push(callback);
+        this._argsMap[action].push(args);
     }
 
     /**
@@ -51,10 +50,13 @@ export default class CalbackMapper {
             return;
         }
 
-        if(!this._callbackMap.hasOwnProperty(action) || this._argumentsMap.hasOwnProperty(action)) {
+        if(!this._callbackMap.hasOwnProperty(action) && !this._argsMap.hasOwnProperty(action)) {
             return;
         }
 
-        this._callbackMap[action].apply(this, this._argumentsMap[action]);
+        let callbacksCount = this._callbackMap[action].length;
+        for(let index = 0; index < callbacksCount; index++) {
+            this._callbackMap[action][index].apply(this, this._argsMap[action][index]);
+        }
     }
 }
