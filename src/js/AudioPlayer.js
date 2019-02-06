@@ -10,7 +10,9 @@ export default class AudioPlayer {
     {
         this._callbackMapper = new CallbackMapper();
         this._audio = null;
-        this._isPlaying = false;
+        this._requestedPlay = false;
+        this._urlToLoad = null;
+        this._urlLoaded = false;
     }
 
     /**
@@ -116,6 +118,11 @@ export default class AudioPlayer {
      */
     _canPlayHandler(event) {
         if(!this._audio) return null;
+        if(this._requestedPlay === true) {
+            this._requestedPlay = false;
+            this._audio.play();
+            this._callbackMapper.trigger('play');
+        }
         this._callbackMapper.trigger('canPlay');
     }
 
@@ -132,6 +139,7 @@ export default class AudioPlayer {
      */
     _canPlayTroughHandler(event) {
         if(!this._audio) return null;
+        this._urlLoaded = true;
     }
 
     /**
@@ -310,7 +318,9 @@ export default class AudioPlayer {
      */
     load(soundUrl)
     {
-        console.log(soundUrl);
+        if(this._urlToLoad === soundUrl && this._urlLoaded === true) return; //We already loaded the url.
+        this._urlToLoad = soundUrl;
+
         if(typeof soundUrl !== "string") {
             console.error('Player: Could not play the sound because the url wasn\'t a string.');
             return;
@@ -322,12 +332,12 @@ export default class AudioPlayer {
     }
 
     /**
-     * Plays the loaded sound.
+     * Requests to play the sound as soon as it is loaded
      */
     play()
     {
         if(!this._audio) return null;
-        this._audio.play();
+        this._requestedPlay = true;
     }
 
     /**

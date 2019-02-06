@@ -1,0 +1,21 @@
+[data-forest-guide] {
+  color: #000;
+  &.loading {
+    color: #b3b461;
+  }
+  &.playing {
+    color: #3eba1c;
+    animation-name: pendulum;
+    animation-duration: 6000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+
+  @keyframes pendulum{
+    0%{ transform: rotate(0deg);}
+    20%{ transform: rotate(-30deg);}
+    50%{ transform: rotate(30deg);}
+    80%{ transform: rotate(-30deg);}
+    100%{transform: rotate(0deg);}
+  }
+}

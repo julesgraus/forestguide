@@ -5,7 +5,7 @@
  */
 export default class Action {
     constructor() {
-        this._type = '';
+        this._name = '';
         this._options = {};
     }
 
@@ -22,7 +22,7 @@ export default class Action {
         }
 
         let instance = new Action();
-        instance._type = object.type;
+        instance._name = object.name;
         instance._options = object.options;
         return instance;
     }
@@ -34,7 +34,7 @@ export default class Action {
      */
     static validate(object) {
         if(typeof object === "undefined") return "Action: The action is not valid because it was undefined";
-        if (!object.hasOwnProperty('type') || typeof object.type !== "string") return "Action: The action was not valid. It must contain a string property called type";
+        if (!object.hasOwnProperty('name') || typeof object.name !== "string") return "Action: The action was not valid. It must contain a string property called name";
         if (!object.hasOwnProperty('options') || typeof object.options !== "object") return "Action: The action was not valid. It must contain an object property called options";
 
         return true;
@@ -43,8 +43,8 @@ export default class Action {
     /**
      * @return {string}
      */
-    get type() {
-        return this._type;
+    get name() {
+        return this._name;
     }
 
     /**

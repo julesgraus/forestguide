@@ -12,8 +12,7 @@ export default class ForestGuide {
      *
      * @param {object} config
      */
-    constructor(config)
-    {
+    constructor(config) {
         //Initialize dependencies
         this._dataRetriever = new DataRetriever();
         this._config = new Config(config);
@@ -82,30 +81,37 @@ export default class ForestGuide {
 
     /**
      * @param {Guide} guide
+     * @param button The guide button that was clicked and eventually triggered this method
      * @private
      */
     _startOrStopGuidance(guide, button) {
-        console.log('starting', guide);
         let self = this;
-        this._audioPlayer.onLoading(function() {
-            console.log('Loading');
-            console.log('Is playing: ', self._audioPlayer.isPlaying());
-        }).onCanPlay(function() {
-            console.log('Is playing: ', self._audioPlayer.isPlaying());
-            self._audioPlayer.play();
-        }).onPause(function() {
-            console.log('Pause');
-            console.log('Is playing: ', self._audioPlayer.isPlaying());
-        }).onPlayProgress(function() {
-            console.log(self._audioPlayer.getCurrentTime(), self._audioPlayer.isPlaying());
-        }).onFinish(function() {
-            console.log('Finish');
-            console.log('Is playing: ', self._audioPlayer.isPlaying());
-        }).onStopped(function() {
-            console.log('Stopped');
-            console.log('Is playing: ', self._audioPlayer.isPlaying());
-        });
-        this._audioPlayer.load(this._config.rootUrl+guide.soundFile);
+        self._actionProcessor.loadGuide(guide);
+        if(this._audioPlayer.isPlaying() === false) {
+            this._audioPlayer.onLoading(function () {
+                button.classList.add(self._config.loadingClass);
+                button.classList.remove(self._config.playingClass);
+            }).onPlay(function () {
+                button.classList.remove(self._config.loadingClass);
+                button.classList.add(self._config.playingClass);
+            }).onPause(function () {
+                button.classList.remove(self._config.loadingClass);
+                button.classList.remove(self._config.playingClass);
+            }).onPlayProgress(function () {
+                
+            }).onFinish(function () {
+                button.classList.remove(self._config.loadingClass);
+                button.classList.remove(self._config.playingClass);
+            }).onStopped(function () {
+                button.classList.remove(self._config.loadingClass);
+                button.classList.remove(self._config.playingClass);
+            });
+            this._audioPlayer.load(this._config.rootUrl + guide.soundFile);
+            this._audioPlayer.play();
+        } else {
+            this._audioPlayer.stop();
+            this._audioPlayer = new AudioPlayer();
+        }
     }
 }
 

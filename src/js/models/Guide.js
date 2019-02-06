@@ -28,6 +28,7 @@ export default class Guide {
         return instance;
     }
 
+
     /**
      * Returns true if the given object is a valid Guide. Or a string containing errors if not valid
      *
