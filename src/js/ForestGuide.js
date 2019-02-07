@@ -86,7 +86,6 @@ export default class ForestGuide {
      */
     _startOrStopGuidance(guide, button) {
         let self = this;
-        self._actionProcessor.loadGuide(guide);
         if(this._audioPlayer.isPlaying() === false) {
             this._audioPlayer.onLoading(function () {
                 button.classList.add(self._config.loadingClass);
