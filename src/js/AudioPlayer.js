@@ -11,6 +11,7 @@ export default class AudioPlayer {
         this._callbackMapper = new CallbackMapper();
         this._audio = null;
         this._requestedPlay = false;
+        this._ignoreNextPauseForStop = false;
         this._urlToLoad = null;
         this._urlLoaded = false;
     }
@@ -123,6 +124,7 @@ export default class AudioPlayer {
             this._audio.play();
             this._callbackMapper.trigger('play');
         }
+        this._urlLoaded = true;
         this._callbackMapper.trigger('canPlay');
     }
 
@@ -139,7 +141,6 @@ export default class AudioPlayer {
      */
     _canPlayTroughHandler(event) {
         if(!this._audio) return null;
-        this._urlLoaded = true;
     }
 
     /**
@@ -173,6 +174,10 @@ export default class AudioPlayer {
      */
     _pauseHandler(event) {
         if(!this._audio) return null;
+        if(this._ignoreNextPauseForStop) {
+            this._ignoreNextPauseForStop = false;
+            return;
+        } //A stop was triggered. That's a pause followed by setDuration = 0. We ignore this pause in such situations
         this._callbackMapper.trigger('pause');
     }
 
@@ -184,7 +189,7 @@ export default class AudioPlayer {
      */
     _timeUpdateHandler(event)
     {
-        if(!this._audio) return null;
+        if(!this._audio || !this.isPlaying()) return null;
         this._callbackMapper.trigger('playProgress');
     }
 
@@ -261,7 +266,7 @@ export default class AudioPlayer {
     }
 
     /**
-     * Triggered when the audio has begun playing
+     * Triggered when the audio has progressed in play duration
      *
      * @param callback
      * @param args
@@ -306,6 +311,7 @@ export default class AudioPlayer {
     stop()
     {
         if(!this._audio) return null;
+        this._ignoreNextPauseForStop = true; //Prevent pause event from being processed
         this._audio.pause();
         this._audio.currentTime = 0;
         this._callbackMapper.trigger('stop')
@@ -318,7 +324,10 @@ export default class AudioPlayer {
      */
     load(soundUrl)
     {
-        if(this._urlToLoad === soundUrl && this._urlLoaded === true) return; //We already loaded the url.
+        if(this._urlToLoad === soundUrl && this._urlLoaded === true) {
+            // console.log('Warning: Already loaded '+soundUrl+'. Not loading again.');
+            return;
+        } //We already loaded the url.
         this._urlToLoad = soundUrl;
 
         if(typeof soundUrl !== "string") {
@@ -338,6 +347,7 @@ export default class AudioPlayer {
     {
         if(!this._audio) return null;
         this._requestedPlay = true;
+        if(this._urlLoaded) this._canPlayHandler(null); //Because the url is loaded it won't trigger the _canPlayHandler. So we do it manually. The handler will play the sound.
     }
 
     /**
