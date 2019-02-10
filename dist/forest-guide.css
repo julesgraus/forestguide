@@ -1,0 +1,33 @@
+[data-forest-guide] {
+  color: #000; }
+  [data-forest-guide].loading {
+    color: #b3b461; }
+  [data-forest-guide].playing {
+    color: #3eba1c;
+    animation-name: pendulum;
+    animation-duration: 6000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out; }
+@keyframes pendulum {
+  0% {
+    transform: rotate(0deg); }
+  20% {
+    transform: rotate(-30deg); }
+  50% {
+    transform: rotate(30deg); }
+  80% {
+    transform: rotate(-30deg); }
+  100% {
+    transform: rotate(0deg); } }
+.fg_blink {
+  animation: blink 1.5s linear infinite;
+  border-width: 3px !important; }
+@keyframes blink {
+  0% {
+    border-color: rgba(255, 51, 51, 0); }
+  50% {
+    border-color: #ff3333; }
+  100% {
+    border-color: rgba(255, 51, 51, 0); } }
+
+/*# sourceMappingURL=forest-guide.css.map */

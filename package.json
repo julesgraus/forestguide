@@ -9,17 +9,18 @@
   "scripts": {
     "test": "echo \"No tests available. Mayby in the future.\" && exit 1",
     "dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
     "build": "webpack --mode production"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-loader": "7",
     "babel-preset-env": "^1.7.0",
-    "webpack": "^4.29.0",
+    "node-sass": "^4.11.0",
+    "webpack": "^4.29.1",
     "webpack-cli": "^3.2.1"
   },
   "dependencies": {
-    "forestguide": "^0.0.1",
     "uglifyjs-webpack-plugin": "^2.1.1"
   }
 }

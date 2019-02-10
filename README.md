@@ -15,7 +15,7 @@ yarn add forestguide --ignore-engines
 ```
 ### Integration
 
-Just include *node_modules/forestguide/dist/forestguide.js* into your project.
+Just include *node_modules/forestguide/dist/Guideour project.
 More information about integration coming soon since the project just started!
 
 ## License
