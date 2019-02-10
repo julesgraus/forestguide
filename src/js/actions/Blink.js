@@ -2,7 +2,7 @@
  * Blink action.
  *
  * Makes an element blink by toggling a class on that element,
- * that makes that class blink
+ * that makes that element "blink"
  */
 export default class Blink {
     /**
@@ -22,7 +22,6 @@ export default class Blink {
              * @param {Element} element
              */
             function(element) {
-                console.log('blinking!');
                 if(element.classList.contains(validatedOptions.class)) return;
                 element.classList.add(validatedOptions.class);
             }
@@ -46,7 +45,6 @@ export default class Blink {
              * @param {Element} element
              */
             function(element) {
-                console.log('stop blinking! ');
                 element.classList.remove(validatedOptions.class);
             }
         )
@@ -69,7 +67,7 @@ export default class Blink {
             console.error('Blink: The options object does not have an string property called selector');
             return false;
         }
-        if(!options.hasOwnProperty('class') || typeof options.selector !== 'string') options['class'] = 'fg_blink';
+        if(!options.hasOwnProperty('class') || typeof options.selector !== 'string') options['class'] = 'fg-blink-border';
 
         return options
     }

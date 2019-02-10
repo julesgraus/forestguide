@@ -1,4 +1,5 @@
 import Blink from './actions/Blink'
+import ScrollToElement from "./actions/ScrollToElement";
 
 /**
  * Activator. Knows how to activate and deactivate actions
@@ -18,6 +19,10 @@ import Blink from './actions/Blink'
             case 'blink':
                 if(!this._verifyAction(Blink, 'blink')) break;
                 Blink[method](options);
+                break;
+            case 'scrolltoelement':
+                if(!this._verifyAction(ScrollToElement, 'scrollToElement')) break;
+                ScrollToElement[method](options);
                 break;
         }
     }
