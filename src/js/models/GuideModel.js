@@ -1,9 +1,9 @@
-import Cue from "./Cue"
+import CueModel from "./CueModel";
 
 /**
  * Defines Guide data.
  */
-export default class Guide {
+export default class GuideModel {
     constructor() {
         this._soundFile = '';
         this._cues = [];
@@ -13,16 +13,16 @@ export default class Guide {
      * Create a new instance from a json object
      *
      * @param object
-     * @return {null|Guide}
+     * @return {null|GuideModel}
      */
     static fromJson(object) {
-        let trueOrError = Guide.validate(object);
+        let trueOrError = GuideModel.validate(object);
         if(trueOrError !== true) {
             console.error(trueOrError);
             return null;
         }
 
-        let instance = new Guide();
+        let instance = new GuideModel();
         instance._soundFile = object.soundFile;
         instance._cues = object.cues;
         return instance;
@@ -43,7 +43,7 @@ export default class Guide {
         let cueCount = object.cues.length;
         for(let index = 0; index < cueCount; index++) {
             let cue = object.cues[index];
-            let trueOrError = Cue.validate(cue);
+            let trueOrError = CueModel.validate(cue);
             if(trueOrError !== true) return trueOrError;
         }
 
@@ -58,7 +58,7 @@ export default class Guide {
     }
 
     /**
-     * @return {Cue[]}
+     * @return {CueModel[]}
      */
     get cues() {
         return this._cues;

@@ -1,0 +1,76 @@
+/**
+ * Blink action.
+ *
+ * Makes an element blink by toggling a class on that element,
+ * that makes that class blink
+ */
+export default class Blink {
+    /**
+     * Activates the action
+     *
+     * @param {object} options
+     * @return {boolean}
+     */
+    static activate(options)
+    {
+        let validatedOptions = Blink._validateOptions(options);
+        if(!validatedOptions) return false;
+
+        let elements = document.querySelectorAll(validatedOptions.selector);
+        elements.forEach(
+            /**
+             * @param {Element} element
+             */
+            function(element) {
+                console.log('blinking!');
+                if(element.classList.contains(validatedOptions.class)) return;
+                element.classList.add(validatedOptions.class);
+            }
+        )
+    }
+
+    /**
+     * De-activates that action
+     *
+     * @param options
+     * @return {boolean}
+     */
+    static deactivate(options)
+    {
+        let validatedOptions = Blink._validateOptions(options);
+        if(!validatedOptions) return false;
+
+        let elements = document.querySelectorAll(validatedOptions.selector);
+        elements.forEach(
+            /**
+             * @param {Element} element
+             */
+            function(element) {
+                console.log('stop blinking! ');
+                element.classList.remove(validatedOptions.class);
+            }
+        )
+    }
+
+    /**
+     * Validates given options object. And if needed, set defaults on that object.
+     *
+     * @param {object} options
+     * @return {boolean|object} Boolean false if not valid. options object when valid
+     * @private
+     */
+    static _validateOptions(options)
+    {
+        if(typeof options !== 'object') {
+            console.error('Blink: The options parameter was not an expected object.');
+            return false;
+        }
+        if(!options.hasOwnProperty('selector') || typeof options.selector !== 'string') {
+            console.error('Blink: The options object does not have an string property called selector');
+            return false;
+        }
+        if(!options.hasOwnProperty('class') || typeof options.selector !== 'string') options['class'] = 'fg_blink';
+
+        return options
+    }
+}

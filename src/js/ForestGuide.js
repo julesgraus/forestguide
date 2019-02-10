@@ -1,10 +1,11 @@
 import AudioPlayer from './AudioPlayer';
-import Config from './models/Config';
+import ConfigModel from './models/ConfigModel';
 import DataRetriever from './DataRetriever';
-import Guide from './models/Guide';
+import GuideModel from './models/GuideModel';
+import ActionProcessor from './ActionProcessor';
 
 /**
- * @class ForestGuide. Guides users through your app.
+ * ForestGuide. Guides users through your app.
  */
 export default class ForestGuide {
     /**
@@ -15,8 +16,9 @@ export default class ForestGuide {
     constructor(config) {
         //Initialize dependencies
         this._dataRetriever = new DataRetriever();
-        this._config = new Config(config);
+        this._config = new ConfigModel(config);
         this._audioPlayer = new AudioPlayer();
+        this._actionProcessor = new ActionProcessor();
 
         //initialize scalar variables
         this._guideDataAttributeName = 'forest-guide';
@@ -72,7 +74,7 @@ export default class ForestGuide {
                 return;
             }
 
-            let guideModel = Guide.fromJson(json);
+            let guideModel = GuideModel.fromJson(json);
             self._startOrStopGuidance(guideModel, button);
         }).catch(function(reason) {
             console.error('ForestGuide: Could not retrieve guide "'+guideName+'" because of an error: '+reason);
@@ -80,12 +82,13 @@ export default class ForestGuide {
     }
 
     /**
-     * @param {Guide} guide
+     * @param {GuideModel} guide
      * @param button The guide button that was clicked and eventually triggered this method
      * @private
      */
     _startOrStopGuidance(guide, button) {
         let self = this;
+        self._actionProcessor.loadGuide(guide);
         if(this._audioPlayer.isPlaying() === false) {
             this._audioPlayer.onLoading(function () {
                 button.classList.add(self._config.loadingClass);
@@ -96,20 +99,22 @@ export default class ForestGuide {
             }).onPause(function () {
                 button.classList.remove(self._config.loadingClass);
                 button.classList.remove(self._config.playingClass);
+                self._actionProcessor.deactivate();
             }).onPlayProgress(function () {
-                
+                self._actionProcessor.tick(self._audioPlayer.getCurrentTime());
             }).onFinish(function () {
                 button.classList.remove(self._config.loadingClass);
                 button.classList.remove(self._config.playingClass);
             }).onStopped(function () {
                 button.classList.remove(self._config.loadingClass);
                 button.classList.remove(self._config.playingClass);
+                self._actionProcessor.deactivate();
             });
             this._audioPlayer.load(this._config.rootUrl + guide.soundFile);
             this._audioPlayer.play();
         } else {
             this._audioPlayer.stop();
-            this._audioPlayer = new AudioPlayer();
+            // this._audioPlayer.pause(); //Also a possibility to use.
         }
     }
 }
