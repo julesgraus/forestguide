@@ -2,7 +2,7 @@
  * The config object holds configuration data for ForestGuide itself.
  * It does not contain guidance data.
  */
-export default class Config {
+export default class ConfigModel {
     constructor(configObject) {
         if(typeof configObject === 'undefined') configObject = {};
 

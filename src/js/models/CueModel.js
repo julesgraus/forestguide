@@ -1,16 +1,15 @@
-import Action from "./Action"
-import Guide from "./Guide";
+import ActionModel from "./ActionModel"
+import GuideModel from "./GuideModel";
 
 /**
  * Defines Cue data that belongs to a Guide
  *
- * @see Guide
+ * @see GuideModel
  */
-export default class Cue {
+export default class CueModel {
     constructor() {
         this._start = 0;
         this._end = 0;
-        this._selector = '';
         this._actions = [];
     }
 
@@ -20,16 +19,15 @@ export default class Cue {
      * @param object
      */
     static fromJson(object) {
-        let trueOrError = Cue.validate(object);
+        let trueOrError = CueModel.validate(object);
         if(trueOrError !== true) {
             console.error(trueOrError);
             return null;
         }
 
-        let instance = new Cue();
+        let instance = new CueModel();
         instance._start = object.start;
         instance._end = object.end;
-        instance._selector = object.selector;
         instance._actions = object.actions;
         return instance;
     }
@@ -43,14 +41,13 @@ export default class Cue {
         if(typeof object === "undefined") return "Cue: The cue is not valid because it was undefined";
         if (!object.hasOwnProperty('start') || typeof object.start !== "number") return "Cue: The cue was not valid. It must contain a number property called start";
         if (!object.hasOwnProperty('end') || typeof object.end !== "number") return "Cue: The cue was not valid. It must contain a number property called end";
-        if (!object.hasOwnProperty('selector') || typeof object.selector !== "string") return "Cue: The cue was not valid. It must contain a string property called selector";
 
         if (!object.hasOwnProperty('actions') || !Array.isArray(object.actions)) return "Cue: The cue was not valid. It must contain an array property called actions";
 
         let actionCount = object.actions.length;
         for(let index = 0; index < actionCount; index++) {
             let action = object.actions[index];
-            let trueOrError = Action.validate(action);
+            let trueOrError = ActionModel.validate(action);
             if(trueOrError !== true) return trueOrError;
         }
 
@@ -79,7 +76,7 @@ export default class Cue {
     }
 
     /**
-     * @return {Action[]}
+     * @return {ActionModel[]}
      */
     get actions() {
         return this._actions;

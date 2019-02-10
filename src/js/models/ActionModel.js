@@ -1,12 +1,13 @@
 /**
- * Defines Action data that belongs to a Cue
+ * Defines Action data that belongs to a Cue.
  *
- * @see Cue
+ * @see CueModel
  */
-export default class Action {
+export default class ActionModel {
     constructor() {
         this._name = '';
         this._options = {};
+        this._instance = null; //
     }
 
     /**
@@ -15,13 +16,13 @@ export default class Action {
      * @param object
      */
     static fromJson(object) {
-        let trueOrError = Action.validate(object);
+        let trueOrError = ActionModel.validate(object);
         if(trueOrError !== true) {
             console.error(trueOrError);
             return null;
         }
 
-        let instance = new Action();
+        let instance = new ActionModel();
         instance._name = object.name;
         instance._options = object.options;
         return instance;
