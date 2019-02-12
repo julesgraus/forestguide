@@ -191,5 +191,5 @@ background of the element a bit red.
 You are free to use your own styles as you can override the defaults.
 
 
-##Thanks!
+## Thanks!
 Thanks for your interest in this project! Jules.
