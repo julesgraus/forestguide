@@ -1,10 +1,9 @@
 /**
- * Blink action.
+ * AddClass action.
  *
- * Makes an element blink by toggling a class on that element,
- * that makes that element "blink"
+ * Adds a class to an element.
  */
-export default class Blink {
+export default class AddClass {
     /**
      * Activates the action
      *
@@ -13,7 +12,7 @@ export default class Blink {
      */
     static activate(options)
     {
-        let validatedOptions = Blink._validateOptions(options);
+        let validatedOptions = AddClass._validateOptions(options);
         if(!validatedOptions) return false;
 
         let elements = document.querySelectorAll(validatedOptions.selector);
@@ -36,7 +35,7 @@ export default class Blink {
      */
     static deactivate(options)
     {
-        let validatedOptions = Blink._validateOptions(options);
+        let validatedOptions = AddClass._validateOptions(options);
         if(!validatedOptions) return false;
 
         let elements = document.querySelectorAll(validatedOptions.selector);
@@ -60,11 +59,11 @@ export default class Blink {
     static _validateOptions(options)
     {
         if(typeof options !== 'object') {
-            console.error('Blink: The options parameter was not an expected object.');
+            console.error('AddClass: The options parameter was not an expected object.');
             return false;
         }
         if(!options.hasOwnProperty('selector') || typeof options.selector !== 'string') {
-            console.error('Blink: The options object does not have an string property called selector');
+            console.error('AddClass: The options object does not have an string property called selector');
             return false;
         }
         if(!options.hasOwnProperty('class') || typeof options.selector !== 'string') options['class'] = 'fg-blink-border';

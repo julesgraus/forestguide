@@ -1,4 +1,4 @@
-import Blink from './actions/Blink'
+import AddClass from './actions/AddClass'
 import ScrollToElement from "./actions/ScrollToElement";
 
 /**
@@ -16,9 +16,9 @@ import ScrollToElement from "./actions/ScrollToElement";
     _do(name, options, method) {
         let action;
         switch (name.toLowerCase()) {
-            case 'blink':
-                if(!this._verifyAction(Blink, 'blink')) break;
-                Blink[method](options);
+            case 'addclass':
+                if(!this._verifyAction(AddClass, 'AddClass')) break;
+                AddClass[method](options);
                 break;
             case 'scrolltoelement':
                 if(!this._verifyAction(ScrollToElement, 'scrollToElement')) break;
