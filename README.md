@@ -8,7 +8,7 @@ This sound fragment MUST explain what the users see on their screen. And MAY als
 they can interact with your web app.
 
 While the sound is playing, it may also execute certain actions at times you specify. 
-Like scrolling to an element. And maybe and adding a class to that element, emphasising it, so
+Like scrolling to an element. And maybe add a class to that element, emphasising it, so
 that your users know what you are talking about. So in essence, guiding your users to your
 web app.
 
