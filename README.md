@@ -1,5 +1,12 @@
 # Forest Guide
 
+<p align="center">
+<a href="https://travis-ci.com/julesgraus/forestguide"><img src="https://travis-ci.com/julesgraus/forestguide.svg?branch=master" alt="Build Status"></a>
+<a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/dt/forestguide" alt="Total Downloads"></a>
+<a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/v/forestguide" alt="Latest Stable Version"></a>
+<a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/l/forestguide" alt="License"></a>
+</p>
+
 Guiding your users trough your web app.
 
 It can detect certain html elements you choose, like buttons, and transform them into
