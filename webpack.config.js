@@ -5,10 +5,10 @@ module.exports = {
 	mode: 'development',
 
     entry: {
-	    forestguide: path.resolve(__dirname, 'src/js/forestguide.js'),
+	    forestGuide: path.resolve(__dirname, 'src/js/ForestGuide.js'),
     },
     output: {
-        filename: 'forestguide.js',
+        filename: 'forestGuide.js',
         path: path.resolve(__dirname, 'dist')
     },
 
