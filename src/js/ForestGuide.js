@@ -3,7 +3,7 @@ import ConfigModel from './models/ConfigModel';
 import DataRetriever from './DataRetriever';
 import GuideModel from './models/GuideModel';
 import ActionProcessor from './ActionProcessor';
-import Cookies from './cookies';
+import Cookies from './Cookies';
 
 /**
  * ForestGuide. Guides users through your app.
