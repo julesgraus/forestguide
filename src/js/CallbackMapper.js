@@ -15,7 +15,7 @@ export default class CalbackMapper {
 
     /**
      * Registers a callback to an action that you can trigger with the trigger method.
-     * You can also pass in
+     * You can also pass in arguments to pass into the callback when it is being triggered.
      *
      * @param  {string} action
      * @param {function} callback

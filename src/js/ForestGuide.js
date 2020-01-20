@@ -3,6 +3,7 @@ import ConfigModel from './models/ConfigModel';
 import DataRetriever from './DataRetriever';
 import GuideModel from './models/GuideModel';
 import ActionProcessor from './ActionProcessor';
+import Cookies from './cookies';
 
 /**
  * ForestGuide. Guides users through your app.
@@ -14,21 +15,26 @@ export default class ForestGuide {
      * @param {object} config
      */
     constructor(config) {
+
         //Initialize dependencies
         this._dataRetriever = new DataRetriever();
         this._config = new ConfigModel(config);
         this._audioPlayer = new AudioPlayer();
         this._actionProcessor = new ActionProcessor();
-
+        this._cookies = new Cookies();
+        
         //initialize scalar variables
-        this._guideDataAttributeName = 'forest-guide';
+        this._guideDataAttributeName = 'forest-guide'; //The data attribute name will hold the name of the guide that must be played when clicking the button
         this._camelCasedGuideDataAttributeName = 'forestGuide';
+        this._presenceNotificationCookieName = 'presence_notification_closed';
 
-        //Initialize html elements
+        //Will hold al guide buttons. When you click these, the guide will start playing.
         this._guideButtons = null;
 
         //Further initialize the class by delegating to other methods
         this._initializeGuideButtons();
+        this._addListenersToPresenceNotifications();
+        this._initializePresenceNotificationClasses();
     }
 
     /**
@@ -116,6 +122,51 @@ export default class ForestGuide {
             this._audioPlayer.stop();
             // this._audioPlayer.pause(); //Also a possibility to use.
         }
+    }
+
+    /**
+     * Add listeners to close buttons in notifications that will either add a class to them to "close" them.
+     * Or if the class isn't specified, will remove them.
+     * 
+     * @private
+     */
+    _addListenersToPresenceNotifications() {
+        let notificationElements = document.querySelectorAll(this._config.presenceNotificationSelector);
+
+        notificationElements.forEach(
+            /** @param {HTMLElement} notification*/
+            (notification) => {
+                let closeButton = notification.querySelector(this._config.presenceNotificationCloseButtonSelector);
+                if(!closeButton) return;
+
+                console.log('add click handler');
+                closeButton.addEventListener('click', () => {
+                    if(this._config.presenceNotificationCloseClassToAdd !== '') notification.classList.add(this._config.presenceNotificationCloseClassToAdd);
+
+                    if(this._config.presenceNotificationCloseClassToRemove === '' && notification.parentElement) notification.parentElement.removeChild(notification);
+                    else notification.classList.remove(this._config.presenceNotificationCloseClassToRemove);
+
+                    this._cookies.set(this._presenceNotificationCookieName, 1, null);
+                })
+            }
+        );
+    }
+
+    _initializePresenceNotificationClasses() {
+        let notificationElements = document.querySelectorAll(this._config.presenceNotificationSelector);
+        let presenceNotified = this._cookies.get(this._presenceNotificationCookieName);
+        if(presenceNotified) {
+            console.info('already notified the user that forest guide is present. Not adding or removing classes to notifications');
+            return;
+        }
+
+        notificationElements.forEach(
+            /** @param {HTMLElement} notification*/
+            (notification) => {
+                if(this._config.presenceNotificationClassToAdd !== '') notification.classList.add(this._config.presenceNotificationClassToAdd);
+                if(this._config.presenceNotificationClassToRemove !== '') notification.classList.remove(this._config.presenceNotificationClassToRemove);
+            }
+        );
     }
 }
 
