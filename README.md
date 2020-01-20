@@ -24,10 +24,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Installation
 
-You can install Forest guide via Yarn:
+You can install Forest guide via npm:
 
 ```
-yarn add forestguide --ignore-engines
+npm install forestguide
 ```
 
 ### Keywords to indicate requirement levels
