@@ -50,7 +50,7 @@ class HTML5AudioPlayer {
         }
 
         return new Promise(function(resolve, reject) {
-            this._dataRetriever.setResponseType('arraybuffer'); //Needed to retrieve the sound buffer.
+            this._dataRetriever.responseType = 'arraybuffer' //Needed to retrieve the sound buffer.
             this._dataRetriever.get(soundUrl).then(function(response) {
                 self._audioContext.decodeAudioData(request.response, function(buffer) {
                     self._audioBuffer = buffer;

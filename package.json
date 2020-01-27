@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "test-watch": "jest --watch",
     "test-publish": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",

@@ -2,6 +2,7 @@
 
 <p align="center">
 <a href="https://travis-ci.com/julesgraus/forestguide"><img src="https://travis-ci.com/julesgraus/forestguide.svg?branch=master" alt="Build Status"></a>
+<a href='https://coveralls.io/github/julesgraus/forestguide'><img src='https://coveralls.io/repos/github/julesgraus/forestguide/badge.svg' alt='Coverage Status' /></a>
 <a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/dt/forestguide" alt="Total Downloads"></a>
 <a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/v/forestguide" alt="Latest Stable Version"></a>
 <a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/l/forestguide" alt="License"></a>
