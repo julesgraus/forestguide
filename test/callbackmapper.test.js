@@ -1,5 +1,6 @@
 import CallbackMapper from "../src/js/CallbackMapper";
 
+//Mock the console.error method
 const originalConsoleError = global.console.error;
 beforeEach(() => {
     global.console.error = jest.fn();

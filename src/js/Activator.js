@@ -14,7 +14,6 @@ import ScrollToElement from "./actions/ScrollToElement";
      * @private
      */
     _do(name, options, method) {
-        let action;
         switch (name.toLowerCase()) {
             case 'addclass':
                 if(!this._verifyAction(AddClass, 'AddClass')) break;

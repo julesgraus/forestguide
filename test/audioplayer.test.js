@@ -1,5 +1,6 @@
 import AudioPlayer from "../src/js/AudioPlayer";
 
+//Mock the console.error method
 const originalConsoleError = global.console.error;
 beforeEach(() => {
     global.console.error = jest.fn();

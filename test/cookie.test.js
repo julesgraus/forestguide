@@ -1,17 +1,5 @@
 import Cookies from "../src/js/Cookies";
 
-let originalConsoleErrorFn = global.console.error;
-let mockedConsoleErrorFn = jest.fn();
-
-beforeEach(() => {
-        mockedConsoleErrorFn.mockClear();
-        global.console.error = mockedConsoleErrorFn;
-});
-
-afterEach(() => {
-        global.console.error = originalConsoleErrorFn;
-});
-
 test('Should return null when a cookie isn\'t set', () => {
         let cookies = new Cookies();
         expect(cookies.get('doesnotexisthopefully')).toEqual(null);

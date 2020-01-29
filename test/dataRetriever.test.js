@@ -92,7 +92,7 @@ test('Should return a rejecting promise passing an invalid url.', () => {
         let dataRetriever = new DataRetriever();
         let resultPromise = dataRetriever.get({'a': 'do not do this'}); //The interaction with dataRetriever starts here.
         resultPromise.catch(error => expect(error).toContain('DataRetriever:get The url must be a string'));
-        expect(mockedConsoleErrorFn).toHaveBeenCalledWith('DataRetriever:get The url must be a string');
+        expect(global.console.error).toHaveBeenCalledWith('DataRetriever:get The url must be a string');
 });
 
 test('Should not set the username to something other then a string.', () => {
@@ -100,7 +100,7 @@ test('Should not set the username to something other then a string.', () => {
         expect(dataRetriever.username).toEqual(null);
         dataRetriever.username = {};
         expect(dataRetriever.username).toEqual(null);
-        expect(mockedConsoleErrorFn).toHaveBeenCalledWith('DataRetriever:username The username must be a string');
+        expect(global.console.error).toHaveBeenCalledWith('DataRetriever:username The username must be a string');
         dataRetriever.username = 'test';
         expect(dataRetriever.username).toEqual('test');
 });
@@ -110,7 +110,7 @@ test('Should not set the password to something other then a string.', () => {
         expect(dataRetriever.password).toEqual(null);
         dataRetriever.password = {};
         expect(dataRetriever.password).toEqual(null);
-        expect(mockedConsoleErrorFn).toHaveBeenCalledWith('DataRetriever:password The password must be a string');
+        expect(global.console.error).toHaveBeenCalledWith('DataRetriever:password The password must be a string');
         dataRetriever.password = 'test';
         expect(dataRetriever.password).toEqual('test');
 });
@@ -123,7 +123,7 @@ test('Should not set the response type to something other then a supported strin
         expect(dataRetriever.responseType).toEqual('text'); //Text is the default one
         dataRetriever.responseType =  'verbal'; //Response type does not exist xD
         expect(dataRetriever.responseType).toEqual('text');
-        expect(mockedConsoleErrorFn).toHaveBeenCalledWith('Dataretriever:setResponseType: The type was not valid. It must be one of these: text, arraybuffer, blob, document');
+        expect(global.console.error).toHaveBeenCalledWith('Dataretriever:setResponseType: The type was not valid. It must be one of these: text, arraybuffer, blob, document');
         dataRetriever.responseType = 'arraybuffer';
         expect(dataRetriever.responseType).toEqual('arraybuffer');
 });
@@ -137,9 +137,9 @@ test('Should not be able to set a request header to something other then a strin
         };
 
         dataRetriever.setHeader({}, null); //Bad parameter values
-        expect(mockedConsoleErrorFn).toHaveBeenCalledWith('Dataretriever:setHeader: The name of a header must be string');
+        expect(global.console.error).toHaveBeenCalledWith('Dataretriever:setHeader: The name of a header must be string');
         dataRetriever.setHeader('x-test', null); //Bad parameter values
-        expect(mockedConsoleErrorFn).toHaveBeenCalledWith('Dataretriever:setHeader: The value(s) of a header must be string');
+        expect(global.console.error).toHaveBeenCalledWith('Dataretriever:setHeader: The value(s) of a header must be string');
 
         dataRetriever.setHeader('x-test', 'someval');
         expect(dataRetriever.getHeader('x-test')).toEqual('someval');
