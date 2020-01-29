@@ -401,7 +401,7 @@ export default class AudioPlayer {
         this._urlToLoad = soundUrl;
 
         if(typeof soundUrl !== "string") {
-            console.error('Player: Could not play the sound because the url wasn\'t a string.');
+            console.error('AudioPlayer:load Could not play the sound because the url wasn\'t a string.');
             return;
         }
 

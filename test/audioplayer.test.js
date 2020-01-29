@@ -40,6 +40,7 @@ test('Audio player test', () => {
             eventMap: eventMap,
             play: audioPlayerPlayFn,
             pause: audioPlayerPauseFn,
+            buffered: {},
             currentTime: 1,
             readyState: 4,
             addEventListener: audioPlayerAddEventListenerFn = jest.fn((event, callback) => {
@@ -117,6 +118,10 @@ test('Audio player test', () => {
     audioPlayer.load('some other url'); //not already loaded. Should reset the audio player and thus stopping it.
     expect(onStoppedCallback).toBeCalledTimes(2);
 
+    //Test loading of non string url
+    audioPlayer.load({'url': 'myfile.mp3'}); //The argument isn't a string. It is an object, and that is not allowed
+    expect(global.console.error).toBeCalledWith('AudioPlayer:load Could not play the sound because the url wasn\'t a string.');
+
     //Test setting of current time
     expect(audioPlayer.getCurrentTime()).toEqual(1);
     audioPlayer.setCurrentTime('9'); //Strings aren't valid. This should trigger an error.
@@ -124,6 +129,9 @@ test('Audio player test', () => {
     expect(audioPlayer.getCurrentTime()).toEqual(1);
     audioPlayer.setCurrentTime(9); //This should work
     expect(audioPlayer.getCurrentTime()).toEqual(9);
+
+    //Expect buffered method to return a timeRanges object holding buffer information
+    expect(audioPlayer.buffered()).toBeInstanceOf(Object); //Node cannot get access to a real timeRanges object
 
     //Test the other callbacks too
     audioPlayer._audio.dispatchEvent(new Event('loadeddata'));
