@@ -17,7 +17,7 @@ they can interact with your web app.
 
 While the sound is playing, it may also execute certain actions at times you specify. 
 Like scrolling to an element. And maybe and adding a class to that element, emphasising it, so
-that your users know what you are talking about. So in essence, guiding your users to your
+that your users know what you are talking about. So in essence, guiding your users trough your
 web app.
 
 ## License
@@ -53,7 +53,7 @@ The root url is the name of the **resource folder**.
         "rootUrl": 'forestguide/',
     });
     ```
-5. Now you are ready to create a guide and let that guide users to your app.
+5. Now you are ready to create a guide and let that guide users trough your app.
 
 ### Understanding guides
 
