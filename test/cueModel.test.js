@@ -2,7 +2,7 @@ import CueModel from "../src/js/models/CueModel";
 
 
 let originalConsoleErrorFn = global.console.error;
-let mockedConsoleErrorFn = jest.fn(originalConsoleErrorFn);
+let mockedConsoleErrorFn = jest.fn();
 
 //Mock the console.error method
 beforeEach(() => {
