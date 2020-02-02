@@ -2,6 +2,7 @@
 
 <p align="center">
 <a href="https://travis-ci.com/julesgraus/forestguide"><img src="https://travis-ci.com/julesgraus/forestguide.svg?branch=master" alt="Build Status"></a>
+<a href='https://coveralls.io/github/julesgraus/forestguide'><img src='https://coveralls.io/repos/github/julesgraus/forestguide/badge.svg' alt='Coverage Status' /></a>
 <a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/dt/forestguide" alt="Total Downloads"></a>
 <a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/v/forestguide" alt="Latest Stable Version"></a>
 <a href="https://www.npmjs.com/package/forestguide"><img src="https://img.shields.io/npm/l/forestguide" alt="License"></a>
@@ -15,8 +16,8 @@ This sound fragment MUST explain what the users see on their screen. And MAY als
 they can interact with your web app.
 
 While the sound is playing, it may also execute certain actions at times you specify. 
-Like scrolling to an element. And maybe add a class to that element, emphasising it, so
-that your users know what you are talking about. So in essence, guiding your users to your
+Like scrolling to an element. And maybe and adding a class to that element, emphasising it, so
+that your users know what you are talking about. So in essence, guiding your users trough your
 web app.
 
 ## License
@@ -38,10 +39,10 @@ This readme contains keywords that indicate certain requirement levels, as descr
 You must include 1 javascript file and may include a css file with default styling:
 
 1. Find the forest guide dist directory:
-    * If you installed Forest Guide with yarn, the root directory is node_modules/forestguide/dist.
+    * If you installed Forest Guide with npm, the root directory is node_modules/forestguide/dist.
     * If you downloaded the project on github, the root directory is the dist directory.
 2. Include the both forestguide.css and forestguide.js from the dist directoy into your project.
-When you use yarn, just reference it in the node_modules folder. Don't copy it to somewhere else.
+When you use npm, just reference it in the node_modules folder. Don't copy it to somewhere else.
 3. In your document root folder (public_html, htdocs etc), create a folder and note its name. 
 In this folder you later put audio files and json files that guide your users. 
 From now on, we call this the **resource folder**.
@@ -52,7 +53,7 @@ The root url is the name of the **resource folder**.
         "rootUrl": 'forestguide/',
     });
     ```
-5. Now you are ready to create a guide and let that guide users to your app.
+5. Now you are ready to create a guide and let that guide users trough your app.
 
 ### Understanding guides
 

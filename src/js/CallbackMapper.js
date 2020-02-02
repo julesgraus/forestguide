@@ -51,6 +51,7 @@ export default class CalbackMapper {
         }
 
         if(!this._callbackMap.hasOwnProperty(action) && !this._argsMap.hasOwnProperty(action)) {
+            console.error('CallbackMapper: There is no callback registered with an action name of: '+action);
             return;
         }
 

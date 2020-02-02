@@ -22,6 +22,15 @@ export default class ActionProcessor {
         this._cueIdsToActivate = [];   //Holds the ids of cues that needs to be activated
         this._cueIdsToDeactivate = []; //Holds the ids of cues that need to be deactivated
         this._activator = new Activator(); //Knows how to create actions
+        this._tick = 0; //Holds the current tick (seconds into a guide).
+
+        this.tick = this.tick.bind(this);
+        this._activateCues = this._activateCues.bind(this);
+        this._deactivateCues = this._deactivateCues.bind(this);
+        this._activateAction = this._activateAction.bind(this);
+        this._deactivateAction = this._deactivateAction.bind(this);
+        this.deactivate = this.deactivate.bind(this);
+        this._markCuesToActivateAndDeactivate = this._markCuesToActivateAndDeactivate.bind(this);
     }
 
     /**
@@ -30,12 +39,13 @@ export default class ActionProcessor {
      * @param {GuideModel} guide
      */
     loadGuide(guide) {
-        if(!guide instanceof GuideModel) {
+        if(!(guide instanceof GuideModel)) {
             console.error('The actionprocessor only accepts an instance of the Guide class. Something else was given');
             return;
         }
 
         this._guide = guide;
+        this._tick = 0;
     }
 
     /**
@@ -43,12 +53,11 @@ export default class ActionProcessor {
      */
     deactivate()
     {
-        self = this;
         this._cueIdsToActivate = [];
         this._cueIdsToDeactivate = [];
-        this._activeCueIds.forEach(function(cueId) {
-            self._cueIdsToDeactivate.push(cueId);
-        });
+        this._activeCueIds.forEach(function(cue) {
+            this._cueIdsToDeactivate.push(cue)
+        }.bind(this));
         this._deactivateCues();
         this._activeCueIds = [];
         this._cueIdsToDeactivate = [];
@@ -56,40 +65,41 @@ export default class ActionProcessor {
 
     /**
      * Check if one of the guides actions should be executed or stopped,
-     * depending on what the guide says in combination with the given current
+     * depending on how the guide is configured in combination with the given current
      * time in seconds.
      *
      * @param {number} seconds
      */
     tick(seconds) {
         if(!this._guide) return;
-        let self = this;
-
-        //Put cues that need to be activated in the _cuesToActivate array.
-        //And the ones that need to be deactivated in the _cuesToDeactivate array
-        this._guide.cues.forEach(
-            /**
-             * @param {CueModel} cue
-             * @param {number} index
-             */
-            function (cue, index) {
-                let activeCuesIdIndex = self._activeCueIds.indexOf(index);
-                let cuesToActivateIdIndex = self._cueIdsToActivate.indexOf(index);
-                let cuesToDeactivateIdIndex = self._cueIdsToDeactivate.indexOf(index);
-
-                if(seconds >= cue.start && seconds <= cue.end ) {
-                    if(activeCuesIdIndex !== -1 || cuesToActivateIdIndex !== -1 || cuesToDeactivateIdIndex !== -1) return; //Only mark to be activated when the cue was not active, to be activated or deactivated
-                    self._cueIdsToActivate.push(index);
-                } else if((seconds > cue.end || seconds < cue.start)) {
-                    if(activeCuesIdIndex === -1 || cuesToDeactivateIdIndex !== -1) return; //Only mark the cue to be deactivated when it is active or is not marked as
-                    //Cue is active and outside of the start and end time of the cue.
-                    self._cueIdsToDeactivate.push(index);
-                }
-            }
-        );
+        this._tick = seconds;
+        
+        this._guide.cues.forEach(this._markCuesToActivateAndDeactivate);
 
         this._deactivateCues();
         this._activateCues();
+    }
+    
+    /**
+     * Puts cues that need to be activated in the _cuesToActivate array.
+     * And the ones that need to be deactivated in the _cuesToDeactivate array
+     * 
+     * @param {CueModel} cue
+     * @param {number} index
+     */
+    _markCuesToActivateAndDeactivate(cue, index) {
+        let activeCuesIdIndex = this._activeCueIds.indexOf(index);
+        let cuesToActivateIdIndex = this._cueIdsToActivate.indexOf(index);
+        let cuesToDeactivateIdIndex = this._cueIdsToDeactivate.indexOf(index);
+
+        if(this._tick >= cue.start && this._tick <= cue.end ) {
+            if(activeCuesIdIndex !== -1 || cuesToActivateIdIndex !== -1 || cuesToDeactivateIdIndex !== -1) return; //Only mark to be activated when the cue was not active, to be activated or deactivated
+            this._cueIdsToActivate.push(index);
+        } else if((this._tick > cue.end || this._tick < cue.start)) {
+            if (activeCuesIdIndex === -1 || cuesToDeactivateIdIndex !== -1) return; //Only mark the cue to be deactivated when it is active or is not marked as
+            //Cue is active and outside of the start and end time of the cue.
+            this._cueIdsToDeactivate.push(index);
+        }
     }
 
     /**
@@ -97,23 +107,14 @@ export default class ActionProcessor {
      * @private
      */
     _activateCues() {
-        let self = this;
         let cueId;
         while(typeof (cueId = this._cueIdsToActivate.pop()) === "number")
         {
-
-            let cue = self._guide.cues[cueId];
-            cue.actions.forEach(
-                /**
-                 * @param {ActionModel} action
-                 */
-                function (action) {
-                    self._activateAction(action);
-                }
-            );
+            let cue = this._guide.cues[cueId];
+            cue.actions.forEach(this._activateAction);
 
             //Add the cue to the _activeCueIds
-            self._activeCueIds.push(cueId);
+            this._activeCueIds.push(cueId);
         }
     }
 
@@ -122,23 +123,14 @@ export default class ActionProcessor {
      * @private
      */
     _deactivateCues() {
-        let self = this;
         let cueId;
         while(typeof (cueId = this._cueIdsToDeactivate.pop()) === "number")
         {
-
-            let cue = self._guide.cues[cueId];
-            cue.actions.forEach(
-                /**
-                 * @param {ActionModel} action
-                 */
-                function (action) {
-                    self._deactivateAction(action);
-                }
-            );
+            let cue = this._guide.cues[cueId];
+            cue.actions.forEach(this._deactivateAction);
 
             //Remove the cue id from the _activeCueIds
-            self._activeCueIds.splice(self._activeCueIds.indexOf(cueId), 1);
+            this._activeCueIds.splice(this._activeCueIds.indexOf(cueId), 1);
         }
     }
 

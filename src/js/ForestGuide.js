@@ -31,6 +31,10 @@ export default class ForestGuide {
         //Will hold al guide buttons. When you click these, the guide will start playing.
         this._guideButtons = null;
 
+        //Force functions to be bound to this instance
+        this._guideButtonClicked = this._guideButtonClicked.bind(this);
+        this._startOrStopGuidance = this._startOrStopGuidance.bind(this);
+
         //Further initialize the class by delegating to other methods
         this._initializeGuideButtons();
         this._addListenersToPresenceNotifications();
@@ -46,13 +50,12 @@ export default class ForestGuide {
      */
     _initializeGuideButtons()
     {
-        let self = this;
         let selector = "[data-"+this._guideDataAttributeName+"]";
         this._guideButtons = document.querySelectorAll(selector);
 
         this._guideButtons.forEach(function(guideButton) {
-            guideButton.addEventListener('click', self._guideButtonClicked.bind(self));
-        })
+            guideButton.addEventListener('click', this._guideButtonClicked);
+        }.bind(this))
     }
 
     /**
@@ -62,7 +65,6 @@ export default class ForestGuide {
      * @private
      */
     _guideButtonClicked(mouseEvent) {
-        let self = this;
         let button = mouseEvent.target;
         mouseEvent.preventDefault();
         if(!this._guideDataAttributeName in button.dataset) {
@@ -81,8 +83,8 @@ export default class ForestGuide {
             }
 
             let guideModel = GuideModel.fromJson(json);
-            self._startOrStopGuidance(guideModel, button);
-        }).catch(function(reason) {
+            this._startOrStopGuidance(guideModel, button);
+        }.bind(this)).catch(function(reason) {
             console.error('ForestGuide: Could not retrieve guide "'+guideName+'" because of an error: '+reason);
         })
     }
@@ -93,29 +95,28 @@ export default class ForestGuide {
      * @private
      */
     _startOrStopGuidance(guide, button) {
-        let self = this;
-        self._actionProcessor.loadGuide(guide);
+        this._actionProcessor.loadGuide(guide);
         if(this._audioPlayer.isPlaying() === false) {
             this._audioPlayer.onLoading(function () {
-                button.classList.add(self._config.loadingClass);
-                button.classList.remove(self._config.playingClass);
-            }).onPlay(function () {
-                button.classList.remove(self._config.loadingClass);
-                button.classList.add(self._config.playingClass);
-            }).onPause(function () {
-                button.classList.remove(self._config.loadingClass);
-                button.classList.remove(self._config.playingClass);
-                self._actionProcessor.deactivate();
-            }).onPlayProgress(function () {
-                self._actionProcessor.tick(self._audioPlayer.getCurrentTime());
-            }).onFinish(function () {
-                button.classList.remove(self._config.loadingClass);
-                button.classList.remove(self._config.playingClass);
-            }).onStopped(function () {
-                button.classList.remove(self._config.loadingClass);
-                button.classList.remove(self._config.playingClass);
-                self._actionProcessor.deactivate();
-            });
+                button.classList.add(this._config.loadingClass);
+                button.classList.remove(this._config.playingClass);
+            }.bind(this)).onPlay(function () {
+                button.classList.remove(this._config.loadingClass);
+                button.classList.add(this._config.playingClass);
+            }.bind(this)).onPause(function () {
+                button.classList.remove(this._config.loadingClass);
+                button.classList.remove(this._config.playingClass);
+                this._actionProcessor.deactivate();
+            }.bind(this)).onPlayProgress(function () {
+                this._actionProcessor.tick(this._audioPlayer.getCurrentTime());
+            }.bind(this)).onFinish(function () {
+                button.classList.remove(this._config.loadingClass);
+                button.classList.remove(this._config.playingClass);
+            }.bind(this)).onStopped(function () {
+                button.classList.remove(this._config.loadingClass);
+                button.classList.remove(this._config.playingClass);
+                this._actionProcessor.deactivate();
+            }.bind(this));
             this._audioPlayer.load(this._config.rootUrl + guide.soundFile);
             this._audioPlayer.play();
         } else {
@@ -139,7 +140,6 @@ export default class ForestGuide {
                 let closeButton = notification.querySelector(this._config.presenceNotificationCloseButtonSelector);
                 if(!closeButton) return;
 
-                console.log('add click handler');
                 closeButton.addEventListener('click', () => {
                     if(this._config.presenceNotificationCloseClassToAdd !== '') notification.classList.add(this._config.presenceNotificationCloseClassToAdd);
 

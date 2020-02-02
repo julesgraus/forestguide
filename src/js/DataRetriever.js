@@ -12,6 +12,8 @@ export default class DataRetriever {
         this._username = null;
         this._password = null;
         this._responseType = 'text';
+
+        this._open = this._open.bind(this);
     }
 
     /**
@@ -40,15 +42,10 @@ export default class DataRetriever {
             return;
         }
 
-        if(typeof url !== "string") {
-            console.error('DataRetriever:_open The url must be a string');
-            return;
-        }
-
-        this._request.open(method.toUpperCase(), url, true, self._username, self._password);
-        for(let headerName in self._headers) {
-            if(!self._headers.hasOwnProperty(headerName)) continue;
-            this._request.setRequestHeader(headerName, self._headers[headerName]);
+        this._request.open(method.toUpperCase(), url, true, this._username, this._password);
+        for(let headerName in this._headers) {
+            if(!this._headers.hasOwnProperty(headerName)) continue;
+            this._request.setRequestHeader(headerName, this._headers[headerName]);
         }
 
         this._request.responseType = this._responseType;
@@ -64,14 +61,14 @@ export default class DataRetriever {
 
         this._request.onreadystatechange = function() {
              switch (self._request.readyState) {
-                 case XMLHttpRequest.UNSENT:
-                     break;
-                 case XMLHttpRequest.OPENED:
-                     break;
-                 case XMLHttpRequest.HEADERS_RECEIVED:
-                     break;
-                 case XMLHttpRequest.LOADING:
-                     break;
+                 // case XMLHttpRequest.UNSENT:
+                 //     break;
+                 // case XMLHttpRequest.OPENED:
+                 //     break;
+                 // case XMLHttpRequest.HEADERS_RECEIVED:
+                 //     break;
+                 // case XMLHttpRequest.LOADING:
+                 //     break;
                  case XMLHttpRequest.DONE:
                      switch (self._request.status) {
                          case 200:
@@ -89,14 +86,24 @@ export default class DataRetriever {
 
     /**
      * Set the expected response type
+     *
+     * @param {string} type
      */
-    setResponseType(type = 'text') {
+    set responseType(type) {
         let supportedTypes = ['text', 'arraybuffer', 'blob', 'document'];
 
         if(typeof type !== "string" || supportedTypes.indexOf(type) === -1) {
-            console.log('Dataretriever:setResponseType: The type was not valid. It must be one of these: '+supportedTypes.join(', '));
+            console.error('Dataretriever:setResponseType: The type was not valid. It must be one of these: '+supportedTypes.join(', '));
+            return this;
         }
         this._responseType = type;
+    }
+
+    /**
+     * Get the response type
+     */
+    get responseType() {
+        return this._responseType;
     }
 
     /**
@@ -111,14 +118,35 @@ export default class DataRetriever {
     /**
      * Sets / overrides a header for the next request
      *
-     * @param headerName
-     * @param headerValues
+     * @param {string} headerName
+     * @param {string} headerValues
      * @return DataRetriever
      */
     setHeader(headerName, headerValues) {
+        if(typeof headerName !== "string") {
+            console.error('Dataretriever:setHeader: The name of a header must be string');
+            return this;
+        }
+
+        if(typeof headerValues !== "string") {
+            console.error('Dataretriever:setHeader: The value(s) of a header must be string');
+            return this;
+        }
+
         this._headers[headerName] = headerValues;
         return this;
     }
+
+    /**
+     *
+     * @param headerName
+     * @return {null|string}
+     */
+    getHeader(headerName) {
+        if (this._headers.hasOwnProperty(headerName)) return this._headers[headerName];
+        return null;
+    }
+
 
     /**
      * Sets the username for when performing a request
@@ -127,11 +155,20 @@ export default class DataRetriever {
      */
     set username(value) {
         if(typeof value !== "string") {
-            console.error('DataRetriever:setUsername The username must be a string');
+            console.error('DataRetriever:username The username must be a string');
             return;
         }
         this._username = value;
     }
+
+    /**
+     * Returns the username for the requests
+     * @return {null}
+     */
+    get username() {
+        return this._username;
+    }
+
 
     /**
      * Sets a password for when performing a request
@@ -140,10 +177,19 @@ export default class DataRetriever {
      */
     set password(value) {
         if(typeof value !== "string") {
-            console.error('DataRetriever:setPassword The password must be a string');
+            console.error('DataRetriever:password The password must be a string');
             return;
         }
         this._password = value;
+    }
+
+    /**
+     * Returns the password used for requests.
+     *
+     * @return {null}
+     */
+    get password() {
+        return this._password;
     }
 
     /**

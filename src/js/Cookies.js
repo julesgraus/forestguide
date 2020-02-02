@@ -25,5 +25,5 @@ export default class Cookies {
         d.setTime(d.getTime() + ((days) ? 24*60*60*1000*days : '9999999999'));
         document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
     }
-    delete(name) { this.setCookie(name, '', -1); }
+    delete(name) { this.set(name, '', -1); }
 }

@@ -38,11 +38,11 @@ export default class CueModel {
      * @param object
      */
     static validate(object) {
-        if(typeof object === "undefined") return "Cue: The cue is not valid because it was undefined";
-        if (!object.hasOwnProperty('start') || typeof object.start !== "number") return "Cue: The cue was not valid. It must contain a number property called start";
-        if (!object.hasOwnProperty('end') || typeof object.end !== "number") return "Cue: The cue was not valid. It must contain a number property called end";
+        if(typeof object === "undefined") return "CueModel: The cue is not valid because it was undefined";
+        if (!object.hasOwnProperty('start') || typeof object.start !== "number") return "CueModel: The cue was not valid. It must contain a number property called start";
+        if (!object.hasOwnProperty('end') || typeof object.end !== "number") return "CueModel: The cue was not valid. It must contain a number property called end";
 
-        if (!object.hasOwnProperty('actions') || !Array.isArray(object.actions)) return "Cue: The cue was not valid. It must contain an array property called actions";
+        if (!object.hasOwnProperty('actions') || !Array.isArray(object.actions)) return "CueModel: The cue was not valid. It must contain an array property called actions";
 
         let actionCount = object.actions.length;
         for(let index = 0; index < actionCount; index++) {
@@ -66,13 +66,6 @@ export default class CueModel {
      */
     get end() {
         return this._end;
-    }
-
-    /**
-     * @return {string}
-     */
-    get selector() {
-        return this._selector;
     }
 
     /**

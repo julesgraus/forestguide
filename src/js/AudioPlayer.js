@@ -31,7 +31,7 @@ export default class AudioPlayer {
         this._audio.removeEventListener('loadeddata', this._loadedDataHandler.bind(this));
         this._audio.removeEventListener('progress', this._progressHandler.bind(this));
         this._audio.removeEventListener('canplay', this._canPlayHandler.bind(this));
-        this._audio.removeEventListener('canplayTrough', this._canPlayTroughHandler.bind(this));
+        this._audio.removeEventListener('canplaytrough', this._canPlayTroughHandler.bind(this));
         this._audio.removeEventListener('error', this._errorHandler.bind(this));
         this._audio.removeEventListener('pause', this._pauseHandler.bind(this));
         this._audio.removeEventListener('play', this._playHandler.bind(this));
@@ -45,7 +45,7 @@ export default class AudioPlayer {
             this._audio.addEventListener('loadeddata', this._loadedDataHandler.bind(this));
             this._audio.addEventListener('progress', this._progressHandler.bind(this));
             this._audio.addEventListener('canplay', this._canPlayHandler.bind(this));
-            this._audio.addEventListener('canplayTrough', this._canPlayTroughHandler.bind(this));
+            this._audio.addEventListener('canplaytrough', this._canPlayTroughHandler.bind(this));
             this._audio.addEventListener('error', this._errorHandler.bind(this));
             this._audio.addEventListener('pause', this._pauseHandler.bind(this));
             this._audio.addEventListener('play', this._playHandler.bind(this));
@@ -74,6 +74,7 @@ export default class AudioPlayer {
      */
     _durationChangeHandler(event) {
         if(!this._audio) return null;
+        this._callbackMapper.trigger('durationChanged');
     }
 
     /**
@@ -84,6 +85,7 @@ export default class AudioPlayer {
      */
     _loadedMetadataHandler(event) {
         if(!this._audio) return null;
+        this._callbackMapper.trigger('loadedMetaData');
     }
 
     /**
@@ -95,6 +97,7 @@ export default class AudioPlayer {
      */
     _loadedDataHandler(event) {
         if(!this._audio) return null;
+        this._callbackMapper.trigger('loadedData');
     }
 
     /**
@@ -108,6 +111,7 @@ export default class AudioPlayer {
      */
     _progressHandler(event) {
         if(!this._audio) return null;
+        this._callbackMapper.trigger('progress');
     }
 
     /**
@@ -141,6 +145,7 @@ export default class AudioPlayer {
      */
     _canPlayTroughHandler(event) {
         if(!this._audio) return null;
+        this._callbackMapper.trigger('canPlayTrough');
     }
 
     /**
@@ -206,6 +211,18 @@ export default class AudioPlayer {
     }
 
     /**
+     * Event handler for when when the metadata has been loaded.
+     *
+     * @param callback
+     * @param args
+     * @return AudioPlayer
+     */
+    onLoadedMetaData(callback, args = []) {
+        this._callbackMapper.on('loadedmetadata', callback, args);
+        return this;
+    }
+
+    /**
      * Triggered when loading has started
      *
      * @param callback
@@ -218,6 +235,47 @@ export default class AudioPlayer {
     }
 
     /**
+     * Triggered when the first frame of the media has finished loading.
+     * Note that this event will not fire in mobile/tablet devices if data-saver is on in browser settings.
+     *
+     * @param callback
+     * @param args
+     * @return AudioPlayer
+     */
+    onLoadedData(callback, args = []) {
+        this._callbackMapper.on('loadedData', callback, args);
+        return this;
+    }
+
+    /**
+     * Triggered when event is fired to indicate that an operation is in progress.
+     * Sent periodically to inform interested parties of progress downloading the media.
+     * Information about the current amount of the media that has been downloaded is available as a TimeRanges
+     * object that you can retrieve when calling the buffered method
+     *
+     * @param callback
+     * @param args
+     * @return AudioPlayer
+     */
+    onProgress(callback, args = []) {
+        this._callbackMapper.on('progress', callback, args);
+        return this;
+    }
+
+    /**
+     * Event handler for when the metadata has loaded or changed, indicating a change in duration of the media.
+     * This is sent, for example, when the media has loaded enough that the duration is known.
+     *
+     * @param callback
+     * @param args
+     * @return AudioPlayer
+     */
+    onDurationChanged(callback, args = []) {
+        this._callbackMapper.on('durationChanged', callback, args);
+        return this;
+    }
+
+    /**
      * Triggered when the audio has loaded enough to trigger playing
      *
      * @param callback
@@ -226,6 +284,19 @@ export default class AudioPlayer {
      */
     onCanPlay(callback, args = []) {
         this._callbackMapper.on('canPlay', callback, args);
+        return this;
+    }
+
+    /**
+     * Triggered when the user agent can play the media, and estimates that enough data has been loaded
+     * to play the media up to its end without having to stop for further buffering of content.
+     *
+     * @param callback
+     * @param args
+     * @return AudioPlayer
+     */
+    onCanPlayTrough(callback, args = []) {
+        this._callbackMapper.on('canPlayTrough', callback, args);
         return this;
     }
 
@@ -299,7 +370,6 @@ export default class AudioPlayer {
         if(!this._audio) return null;
         this.stop();
         this._enableListeners(false);
-        this._audio = null;
     }
 
 
@@ -331,13 +401,23 @@ export default class AudioPlayer {
         this._urlToLoad = soundUrl;
 
         if(typeof soundUrl !== "string") {
-            console.error('Player: Could not play the sound because the url wasn\'t a string.');
+            console.error('AudioPlayer:load Could not play the sound because the url wasn\'t a string.');
             return;
         }
 
         this._reset();
-        this._audio = new Audio(soundUrl);
+        this._createNewAudioObject(soundUrl);
         this._enableListeners();
+    }
+
+    /**
+     * Create a new audio object
+     * @param soundUrl
+     * @private
+     */
+    _createNewAudioObject(soundUrl) {
+        this._audio = null;
+        this._audio = new Audio(soundUrl);
     }
 
     /**
@@ -370,7 +450,9 @@ export default class AudioPlayer {
         if(!this._audio) return null;
         if(typeof time !== "number") {
             console.error('AudioPlayer:setCurrentTime Did not receive a number. It must be the number of seconds you want to play from')
+            return;
         }
+        this._audio.currentTime = time;
     }
 
     /**
@@ -382,6 +464,14 @@ export default class AudioPlayer {
     {
         if(!this._audio) return 0;
         return this._audio.currentTime;
+    }
+
+    /**
+     * @return {TimeRanges|AudioPlayer.buffered|boolean}
+     */
+    buffered() {
+        if(!this._audio) return new TimeRanges();
+        return this._audio.buffered;
     }
 
     /**
