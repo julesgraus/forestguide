@@ -39,10 +39,10 @@ This readme contains keywords that indicate certain requirement levels, as descr
 You must include 1 javascript file and may include a css file with default styling:
 
 1. Find the forest guide dist directory:
-    * If you installed Forest Guide with yarn, the root directory is node_modules/forestguide/dist.
+    * If you installed Forest Guide with npm, the root directory is node_modules/forestguide/dist.
     * If you downloaded the project on github, the root directory is the dist directory.
 2. Include the both forestguide.css and forestguide.js from the dist directoy into your project.
-When you use yarn, just reference it in the node_modules folder. Don't copy it to somewhere else.
+When you use npm, just reference it in the node_modules folder. Don't copy it to somewhere else.
 3. In your document root folder (public_html, htdocs etc), create a folder and note its name. 
 In this folder you later put audio files and json files that guide your users. 
 From now on, we call this the **resource folder**.
