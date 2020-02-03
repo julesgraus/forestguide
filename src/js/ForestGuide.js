@@ -156,7 +156,6 @@ export default class ForestGuide {
         let notificationElements = document.querySelectorAll(this._config.presenceNotificationSelector);
         let presenceNotified = this._cookies.get(this._presenceNotificationCookieName);
         if(presenceNotified) {
-            console.info('already notified the user that forest guide is present. Not adding or removing classes to notifications');
             return;
         }
 

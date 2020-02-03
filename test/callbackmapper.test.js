@@ -53,10 +53,3 @@ test('Should not trigger a callback when the name isn\'t a string', () => {
     mapper.trigger([]); //The argument must be a string
     expect(global.console.error).toHaveBeenCalledWith('CallbackMapper: not triggering callback since the action is not a string');
 });
-
-test('Should not trigger a callback that does not exist', () => {
-    let mapper = new CallbackMapper();
-    mapper.on('something', () => null);
-    mapper.trigger('someting'); //Because of the typo, the callback mapper will log an error
-    expect(global.console.error).toHaveBeenCalledWith('CallbackMapper: There is no callback registered with an action name of: someting');
-});

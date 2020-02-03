@@ -25,12 +25,12 @@ test('Should instantiate properly when instantiated with no configuration option
     expect(configModel.presenceNotificationClassToAdd).toEqual('');
     expect(configModel.presenceNotificationClassToRemove).toEqual('');
     expect(configModel.presenceNotificationSelector).toEqual('.fgPresenceNotification');
-    expect(configModel.rootUrl).toEqual('forestguide/');
+    expect(configModel.rootUrl).toEqual('/forestguide/');
 });
 
 test('Should instantiate properly when instantiated with configuration options', () => {
     let configModel = new ConfigModel({
-        'rootUrl': 'demo',
+        'rootUrl': '/demo',
         'loadingClass': 'load',
         'playingClass': 'play',
         'presenceNotificationSelector': '.presence',
@@ -50,5 +50,5 @@ test('Should instantiate properly when instantiated with configuration options',
     expect(configModel.presenceNotificationClassToAdd).toEqual('addToMakeVisible');
     expect(configModel.presenceNotificationClassToRemove).toEqual('removeToMakeVisible');
     expect(configModel.presenceNotificationSelector).toEqual('.presence');
-    expect(configModel.rootUrl).toEqual('demo/'); //slash should be added automatically.
+    expect(configModel.rootUrl).toEqual('/demo/'); //slash should be added automatically.
 });

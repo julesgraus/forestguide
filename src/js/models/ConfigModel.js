@@ -6,7 +6,7 @@ export default class ConfigModel {
     constructor(configObject) {
         if(typeof configObject === 'undefined') configObject = {};
 
-        this._rootUrl = configObject.hasOwnProperty('rootUrl') && typeof configObject.rootUrl === "string" ? configObject.rootUrl : 'forestguide/';
+        this._rootUrl = configObject.hasOwnProperty('rootUrl') && typeof configObject.rootUrl === "string" ? configObject.rootUrl : '/forestguide/';
         if(this._rootUrl.substr(this.rootUrl.length -1) !== '/') this._rootUrl += '/';
         this._loadingClass = configObject.hasOwnProperty('loadingClass') && typeof configObject.loadingClass === "string" ? configObject.loadingClass : 'loading';
         this._playingClass = configObject.hasOwnProperty('playingClass') && typeof configObject.playingClass === "string" ? configObject.playingClass : 'playing';

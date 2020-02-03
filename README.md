@@ -20,12 +20,41 @@ Like scrolling to an element. And maybe and adding a class to that element, emph
 that your users know what you are talking about. So in essence, guiding your users trough your
 web app.
 
+* [License](#license)
+  + [Installation](#installation)
+  + [Keywords to indicate requirement levels](#keywords-to-indicate-requirement-levels)
+  + [Integration](#integration)
+  + [Understanding guides](#understanding-guides)
+    - [Structure](#structure)
+      * [Root](#root)
+      * [Cue objects](#cue-objects)
+      * [Action objects](#action-objects)
+      * [Guide example](#guide-example)
+  + [Actions](#actions)
+    - [AddClass](#addclass)
+      * [What it does](#what-it-does)
+      * [Options object](#options-object)
+    - [ScrollToElement](#scrolltoelement)
+      * [What it does](#what-it-does-1)
+      * [Options object](#options-object-1)
+    - [ClosedCaption](#closedcaption)
+      * [What it does](#what-it-does-2)
+      * [Options object](#options-object-2)
+  + [Configuration options](#configuration-options)
+  + [rootUrl property](#rooturl-property)
+  + [loadingClass and playing properties](#loadingclass-and-playing-properties)
+  + [presenceNotification properties](#presencenotification-properties)
+  + [Default css](#default-css)
+    - [addClass action](#addclass-action)
+    - [closed caption action](#closed-caption-action)
+* [Thanks!](#thanks-)
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ### Installation
 
-You can install Forest guide via npm:
+You can install forest guide via npm:
 
 ```
 npm install forestguide
@@ -50,10 +79,12 @@ From now on, we call this the **resource folder**.
 The root url is the name of the **resource folder**.
     ```
     new ForestGuide({
-        "rootUrl": 'forestguide/',
+        "rootUrl": '/forestguide/',
     });
     ```
-5. Now you are ready to create a guide and let that guide users trough your app.
+5. Create HTMLElements like <button>'s users can press on, and give them a "data-forest-guide" attribute
+with the name of a guide (without .json and path). When users press it, that guide wil be loaded and played.
+6. Now you are ready to create a guide and let that guide users trough your app.
 
 ### Understanding guides
 
@@ -189,15 +220,66 @@ Its value defaults to "nearest" when not specified.
 Thee also MAY be a property called "vertical_alignment" that works the same as horizontal alignment. But as the name
 suggests, vertically. Its value defaults to "center" when not specified.
 
+#### ClosedCaption
+##### What it does
+The ClosedCaption action show a closed caption on the bottom or top of the screen. And removes it when it deactivates.
+The name of the action in an action object must be "cc" or "closed_caption"". 
+
+##### Options object
+The options object MUST have a "text" property that MUST be a string. This will be the text that will be displayed
+when the action activates.
+
+It MAY also have a "wrapperClass" property that MUST be a string. The value of the "wrapperClass" property MUST be the 
+name of a css class. The HTMLElement that will have this class applied must wrap a p tag that will be filled when 
+subtitles must be shown. If you don't specify it, it will default to a value of "fg-closed-caption". 
+This class is defined in the default css that is included.
+
+### Configuration options
+The configuration options you pass in as an object into a forest guide instance, allow you to customize most of it's
+settings.
+
+### rootUrl property
+In this is the path part of an url, that will reference a folder in which you put the audio and guide files forest guide
+can us.
+
+### loadingClass and playing properties
+These classes respectively will be added to "buttons" which start / stop guides when a guide is loading or playing.
+This allows you to add your own styling to the buttons depending on their state. They respectively have the default 
+values of "loading" and "playing".
+
+### presenceNotification properties
+Usage of this functionality is optional and if you don't specify it's options, this function will not be used / active.
+"presenceNotificationSelector" MAY reference an HTMLElement that tells the user about the presence of forest guide, 
+and how they get started with it. It's default value is ".fgPresenceNotification". Users MUST be able to close 
+that notification using a close button with a class as defined with the "presenceNotificationCloseButtonSelector" property. 
+That defaults to a value of ".close". A value of property "presenceNotificationClassToRemove" MUST be a class name that 
+MUST be removed to make the notification visible when the user MUST be notified. If you don't specify it, it won't be used.
+A value of property "presenceNotificationClassToAdd" MUST be a class name that 
+MUST be added to make the notification visible when the user MUST be notified. If you don't specify it, it won't be used.
+The value's of properties "presenceNotificationCloseClassToRemove" and "presenceNotificationCloseClassToAdd" can be used to
+respectively remove and / or add a class from / to the notification element to make that element be hidden. Just to make it seem
+closed. If you don't specify them, the notification will be removed from the DOM when the user closes the notification.
+
+The easiest way to use these properties is to make your notification invisible by default using a class. 
+And specify the "presenceNotificationSelector" and "presenceNotificationClassToRemove" properties. The first one
+to tell forest guide which element represents the notification and the second one to tell it which class it must remove
+to make the notification visible.
+
 ### Default css
-The default css file includes two classes, that you can use for the
-addClass action. "fg-blink-border", that is used by default for the
-addClass action. And the "fg-blink-background". The first one, slowly
+The default css file includes some default styling you can use.
+You are free to use your own styles as you can override the defaults.
+
+#### addClass action
+It has 2 classes. "fg-blink-border", that is used by default. 
+And the "fg-blink-background" class. The first one, slowly
 blinks the border of an element red. And the second slowly blinks the
 background of the element a bit red.
 
-You are free to use your own styles as you can override the defaults.
-
+#### closed caption action
+It has a class called "fg-closed-caption". This class is meant for a wrapper
+class that wraps a p tag that will contain the subtitle text. And it will get
+either an extra class called "bottom" or "top" applied automatically to diplay the
+subtitle on the bottom or top of the screen
 
 ## Thanks!
 Thanks for your interest in this project! Jules.

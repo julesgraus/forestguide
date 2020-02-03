@@ -1,5 +1,6 @@
 import AddClass from './actions/AddClass'
 import ScrollToElement from "./actions/ScrollToElement";
+import ClosedCaption from "./actions/ClosedCaption";
 
 /**
  * Activator. Knows how to activate and deactivate actions
@@ -22,6 +23,11 @@ import ScrollToElement from "./actions/ScrollToElement";
             case 'scrolltoelement':
                 if(!this._verifyAction(ScrollToElement, 'scrollToElement')) break;
                 ScrollToElement[method](options);
+                break;
+            case 'cc':
+            case 'closed_caption':
+                if(!this._verifyAction(ClosedCaption, 'cc')) break;
+                ClosedCaption[method](options);
                 break;
         }
     }
