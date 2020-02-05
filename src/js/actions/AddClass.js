@@ -66,7 +66,7 @@ export default class AddClass {
             console.error('AddClass: The options object does not have an string property called selector');
             return false;
         }
-        if(!options.hasOwnProperty('class') || typeof options.selector !== 'string') options['class'] = 'fg-blink-border';
+        if(!options.hasOwnProperty('class') || typeof options.class !== 'string') options['class'] = 'fg-blink-border';
 
         return options
     }
