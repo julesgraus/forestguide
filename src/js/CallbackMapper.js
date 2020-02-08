@@ -9,6 +9,13 @@ export default class CalbackMapper {
      * CallbackMapper constructor
      */
     constructor() {
+        this.reset();
+    }
+
+    /**
+     * Reset the registrations
+     */
+    reset() {
         this._callbackMap = {};
         this._argsMap = {};
     }
@@ -56,7 +63,15 @@ export default class CalbackMapper {
 
         let callbacksCount = this._callbackMap[action].length;
         for(let index = 0; index < callbacksCount; index++) {
-            this._callbackMap[action][index].apply(this, this._argsMap[action][index]);
+            this._callbackMap[action][index].apply(this, this._argsMap[action][index].slice());
         }
+    }
+
+    /**
+     * @param {string} action
+     */
+    clearCallbacksForAction(action) {
+        if(!this._callbackMap.hasOwnProperty(action)) return;
+        delete this._callbackMap[action];
     }
 }
