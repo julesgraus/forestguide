@@ -97,8 +97,6 @@ export default class ForestGuide {
     _startOrStopGuidance(guide, button) {
         this._actionProcessor.loadGuide(guide);
         if(this._audioPlayer.isPlaying() === false) {
-            this._actionProcessor.deactivate();
-            this._audioPlayer.clearCallbacks();
             this._audioPlayer.onLoading(function (refButton) {
                 refButton.classList.add(this._config.loadingClass);
                 refButton.classList.remove(this._config.playingClass);
@@ -115,16 +113,16 @@ export default class ForestGuide {
                 refButton.classList.remove(this._config.loadingClass);
                 refButton.classList.remove(this._config.playingClass);
             }.bind(this), [button]).onStopped(function (refButton) {
-                if(!refButton) return;
                 refButton.classList.remove(this._config.loadingClass);
                 refButton.classList.remove(this._config.playingClass);
-                this._actionProcessor.deactivate();
             }.bind(this), [button]);
             this._audioPlayer.load(this._config.rootUrl + guide.soundFile);
             this._audioPlayer.play();
         } else {
             this._audioPlayer.stop();
             // this._audioPlayer.pause(); //Also a possibility to use.
+            this._actionProcessor.deactivate();
+            this._audioPlayer.clearCallbacks();
         }
     }
 
