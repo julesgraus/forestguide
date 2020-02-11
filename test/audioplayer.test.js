@@ -4,6 +4,7 @@ import AudioPlayer from "../src/js/AudioPlayer";
 const originalConsoleError = global.console.error;
 beforeEach(() => {
     global.console.error = jest.fn();
+    // global.console.error = jest.fn((...err) => console.log('Mock console.error called with: ', ...err));
 });
 
 afterEach(() => {
@@ -156,4 +157,41 @@ test('Audio player test', () => {
     expect(onDurationChanged).toBeCalledTimes(1);
     expect(onPlayProgress).toBeCalledTimes(1);
     expect(onFinishCallback).toBeCalledTimes(1);
+
+
+    //Test play failure
+    let originalPlayFn = audioPlayer._audio.play;
+    let errorFunction = function(err) {
+        return function () {
+            let promiseLike = {
+                then: function (callback) {
+                    return promiseLike
+                },
+                catch: function (callback) {
+                    callback(err);
+                    return promiseLike;
+                }
+            };
+            return promiseLike;
+        };
+    };
+
+    global.console.error.mockClear();
+    audioPlayer._audio.play = errorFunction('NotAllowedError');
+    audioPlayer.play();
+    expect(global.console.error).toBeCalledTimes(2);
+    expect(global.console.error).toBeCalledWith('Could not play because of an error: ');
+    expect(global.console.error).toBeCalledWith('The browser does not allow to play the sound. (NotAllowedError)');
+
+    global.console.error.mockClear();
+    audioPlayer._audio.play = errorFunction('NotSupportedError');
+    audioPlayer.play();
+    expect(global.console.error).toBeCalledTimes(2);
+    expect(global.console.error).toBeCalledWith('The sound file isn\'t supported (NotSupportedError)');
+
+    global.console.error.mockClear();
+    audioPlayer._audio.play = errorFunction('OtherError');
+    audioPlayer.play();
+    expect(global.console.error).toBeCalledTimes(2);
+    expect(global.console.error).toBeCalledWith('OtherError');
 });
