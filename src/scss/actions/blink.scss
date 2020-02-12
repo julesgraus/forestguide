@@ -3,6 +3,7 @@ $namespace: 'fg-blink';
 .#{$namespace}-border {
   animation: blink_border 1.5s linear infinite;
   border-width: 3px !important;
+  border-style: solid !important;
 
   @keyframes blink_border{
     0%{border-color: rgba(255, 51, 51, 0);}

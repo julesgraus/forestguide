@@ -21,9 +21,10 @@ export default class Cookies {
      * @param {int|null} days or null for "forever"
      */
     set(name, value, days = null) {
-        let d = new Date;
-        d.setTime(d.getTime() + ((days) ? 24*60*60*1000*days : '9999999999'));
-        document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
+        let date = new Date();
+        if(!days) date = new Date(8640000000000000); //maximum possible value
+        else date.setTime(date.getTime() + (86400000  * days)); //86400000 milliseconds in a day
+        document.cookie = name + "=" + value + ";path=/;expires=" + date.toGMTString();
     }
     delete(name) { this.set(name, '', -1); }
 }

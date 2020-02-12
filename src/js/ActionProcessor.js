@@ -44,6 +44,7 @@ export default class ActionProcessor {
             return;
         }
 
+        this.deactivate();
         this._guide = guide;
         this._tick = 0;
     }

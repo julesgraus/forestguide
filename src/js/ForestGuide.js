@@ -97,31 +97,32 @@ export default class ForestGuide {
     _startOrStopGuidance(guide, button) {
         this._actionProcessor.loadGuide(guide);
         if(this._audioPlayer.isPlaying() === false) {
-            this._audioPlayer.onLoading(function () {
-                button.classList.add(this._config.loadingClass);
-                button.classList.remove(this._config.playingClass);
-            }.bind(this)).onPlay(function () {
-                button.classList.remove(this._config.loadingClass);
-                button.classList.add(this._config.playingClass);
-            }.bind(this)).onPause(function () {
-                button.classList.remove(this._config.loadingClass);
-                button.classList.remove(this._config.playingClass);
+            this._audioPlayer.onLoading(function (refButton) {
+                refButton.classList.add(this._config.loadingClass);
+                refButton.classList.remove(this._config.playingClass);
+            }.bind(this), [button]).onPlay(function (refButton) {
+                refButton.classList.remove(this._config.loadingClass);
+                refButton.classList.add(this._config.playingClass);
+            }.bind(this), [button]).onPause(function (refButton) {
+                refButton.classList.remove(this._config.loadingClass);
+                refButton.classList.remove(this._config.playingClass);
                 this._actionProcessor.deactivate();
-            }.bind(this)).onPlayProgress(function () {
+            }.bind(this), [button]).onPlayProgress(function () {
                 this._actionProcessor.tick(this._audioPlayer.getCurrentTime());
-            }.bind(this)).onFinish(function () {
-                button.classList.remove(this._config.loadingClass);
-                button.classList.remove(this._config.playingClass);
-            }.bind(this)).onStopped(function () {
-                button.classList.remove(this._config.loadingClass);
-                button.classList.remove(this._config.playingClass);
-                this._actionProcessor.deactivate();
-            }.bind(this));
+            }.bind(this), [button]).onFinish(function (refButton) {
+                refButton.classList.remove(this._config.loadingClass);
+                refButton.classList.remove(this._config.playingClass);
+            }.bind(this), [button]).onStopped(function (refButton) {
+                refButton.classList.remove(this._config.loadingClass);
+                refButton.classList.remove(this._config.playingClass);
+            }.bind(this), [button]);
             this._audioPlayer.load(this._config.rootUrl + guide.soundFile);
             this._audioPlayer.play();
         } else {
             this._audioPlayer.stop();
             // this._audioPlayer.pause(); //Also a possibility to use.
+            this._actionProcessor.deactivate();
+            this._audioPlayer.clearCallbacks();
         }
     }
 

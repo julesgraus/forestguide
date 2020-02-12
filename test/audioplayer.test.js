@@ -4,6 +4,7 @@ import AudioPlayer from "../src/js/AudioPlayer";
 const originalConsoleError = global.console.error;
 beforeEach(() => {
     global.console.error = jest.fn();
+    // global.console.error = jest.fn((...err) => console.log('Mock console.error called with: ', ...err));
 });
 
 afterEach(() => {
@@ -26,7 +27,9 @@ test('Audio player test', () => {
     let onCanPlayTroughCallback = jest.fn();
     let onFinishCallback = jest.fn();
     let onStoppedCallback = jest.fn();
-    let audioPlayerPlayFn = jest.fn();
+    let audioPlayerPlayFn = jest.fn(() => {
+        return Promise.resolve();
+    });
     let audioPlayerPauseFn = jest.fn();
     let audioPlayerAddEventListenerFn = null;
     let audioPlayerRemoveEventListenerFn = jest.fn();
@@ -88,7 +91,7 @@ test('Audio player test', () => {
     audioPlayer.play();
     audioPlayer._audio.dispatchEvent(new Event('play')); //fake the internal firing of a pause event.
     expect(audioPlayerPlayFn).toBeCalledTimes(1);
-    expect(onPlayCallback).toBeCalledTimes(2);
+    expect(onPlayCallback).toBeCalledTimes(1);
 
     //Fake that the audio player got an error
     audioPlayer._audio.error = 'Flux Capacitor did not have enough energy';
@@ -99,10 +102,13 @@ test('Audio player test', () => {
     //Test pausing
     expect(onPauseCallback).toBeCalledTimes(0);
     audioPlayer.pause();
-    audioPlayer._audio.dispatchEvent(new Event('pause')); //fake the internal firing of a pause event
+    audioPlayer._audio.dispatchEvent(new Event('pause')); //fake the internal firing of the event
     expect(onPauseCallback).toBeCalledTimes(1);
 
     //Test stopping
+    audioPlayer.play();
+    audioPlayer._audio.dispatchEvent(new Event('play')); //fake the internal firing of a pause event.
+    expect(onPlayCallback).toBeCalledTimes(2);
     expect(onStoppedCallback).toBeCalledTimes(0);
     audioPlayer.stop();
     audioPlayer._audio.dispatchEvent(new Event('pause')); //fake the internal firing of a pause event.
@@ -112,12 +118,13 @@ test('Audio player test', () => {
 
     //Test internal reset
     audioPlayer.play();
-    expect(audioPlayerPlayFn).toBeCalledTimes(2);
+    audioPlayer._audio.dispatchEvent(new Event('play')); //fake the internal firing of the event
+    expect(audioPlayerPlayFn).toBeCalledTimes(3);
     expect(onPlayCallback).toBeCalledTimes(3);
     audioPlayer.load('some url'); //already loaded. Should not reset the audio player and thus not stopping it.
     expect(onStoppedCallback).toBeCalledTimes(1);
     audioPlayer.load('some other url'); //not already loaded. Should reset the audio player and thus stopping it.
-    expect(onStoppedCallback).toBeCalledTimes(2);
+    expect(onStoppedCallback).toBeCalledTimes(1);
 
     //Test loading of non string url
     audioPlayer.load({'url': 'myfile.mp3'}); //The argument isn't a string. It is an object, and that is not allowed
@@ -135,6 +142,8 @@ test('Audio player test', () => {
     expect(audioPlayer.buffered()).toBeInstanceOf(Object); //Node cannot get access to a real timeRanges object
 
     //Test the other callbacks too
+    audioPlayer.play();
+    audioPlayer._audio.dispatchEvent(new Event('play')); //fake the internal firing of the event
     audioPlayer._audio.dispatchEvent(new Event('loadeddata'));
     audioPlayer._audio.dispatchEvent(new Event('loadedmetadata'));
     audioPlayer._audio.dispatchEvent(new Event('progress'));
@@ -148,4 +157,41 @@ test('Audio player test', () => {
     expect(onDurationChanged).toBeCalledTimes(1);
     expect(onPlayProgress).toBeCalledTimes(1);
     expect(onFinishCallback).toBeCalledTimes(1);
+
+
+    //Test play failure
+    let originalPlayFn = audioPlayer._audio.play;
+    let errorFunction = function(err) {
+        return function () {
+            let promiseLike = {
+                then: function (callback) {
+                    return promiseLike
+                },
+                catch: function (callback) {
+                    callback(err);
+                    return promiseLike;
+                }
+            };
+            return promiseLike;
+        };
+    };
+
+    global.console.error.mockClear();
+    audioPlayer._audio.play = errorFunction('NotAllowedError');
+    audioPlayer.play();
+    expect(global.console.error).toBeCalledTimes(2);
+    expect(global.console.error).toBeCalledWith('Could not play because of an error: ');
+    expect(global.console.error).toBeCalledWith('The browser does not allow to play the sound. (NotAllowedError)');
+
+    global.console.error.mockClear();
+    audioPlayer._audio.play = errorFunction('NotSupportedError');
+    audioPlayer.play();
+    expect(global.console.error).toBeCalledTimes(2);
+    expect(global.console.error).toBeCalledWith('The sound file isn\'t supported (NotSupportedError)');
+
+    global.console.error.mockClear();
+    audioPlayer._audio.play = errorFunction('OtherError');
+    audioPlayer.play();
+    expect(global.console.error).toBeCalledTimes(2);
+    expect(global.console.error).toBeCalledWith('OtherError');
 });

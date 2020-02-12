@@ -11,9 +11,11 @@ export default class AudioPlayer {
         this._callbackMapper = new CallbackMapper();
         this._audio = null;
         this._requestedPlay = false;
-        this._ignoreNextPauseForStop = false;
+        this._ignoreNextPause = false;
+        this._ignoreNextStop = false;
         this._urlToLoad = null;
         this._urlLoaded = false;
+        this._isPlaying = false;
     }
 
     /**
@@ -61,7 +63,7 @@ export default class AudioPlayer {
      * @private
      */
     _loadStartHandler(event) {
-        if(!this._audio) return null;
+        if(!this._audio || this.isPlaying()) return null;
         this._callbackMapper.trigger('loading');
     }
 
@@ -125,11 +127,26 @@ export default class AudioPlayer {
         if(!this._audio) return null;
         if(this._requestedPlay === true) {
             this._requestedPlay = false;
-            this._audio.play();
-            this._callbackMapper.trigger('play');
+            this._audio.play().then(function() {
+                this._urlLoaded = true;
+                this._callbackMapper.trigger('play');
+            }.bind(this)).catch(function (exceptionName) {
+                console.error('Could not play because of an error: ');
+                switch (exceptionName) {
+                    case 'NotAllowedError':
+                        console.error('The browser does not allow to play the sound. (NotAllowedError)');
+                        break;
+                    case 'NotSupportedError':
+                        console.error('The sound file isn\'t supported (NotSupportedError)');
+                        break;
+                    default:
+                        console.error(exceptionName);
+                }
+            })
+        } else {
+            this._urlLoaded = true;
+            this._callbackMapper.trigger('canPlay');
         }
-        this._urlLoaded = true;
-        this._callbackMapper.trigger('canPlay');
     }
 
     /**
@@ -167,6 +184,7 @@ export default class AudioPlayer {
      * @private
      */
     _playHandler(event) {
+        this._isPlaying = true;
         if(!this._audio) return null;
         this._callbackMapper.trigger('play');
     }
@@ -178,9 +196,10 @@ export default class AudioPlayer {
      * @private
      */
     _pauseHandler(event) {
+        this._isPlaying = false;
         if(!this._audio) return null;
-        if(this._ignoreNextPauseForStop) {
-            this._ignoreNextPauseForStop = false;
+        if(this._ignoreNextPause) {
+            this._ignoreNextPause = false;
             return;
         } //A stop was triggered. That's a pause followed by setDuration = 0. We ignore this pause in such situations
         this._callbackMapper.trigger('pause');
@@ -206,6 +225,7 @@ export default class AudioPlayer {
      */
     _endedHandler(event)
     {
+        this._isPlaying = false;
         if(!this._audio) return null;
         this._callbackMapper.trigger('finish');
     }
@@ -215,10 +235,12 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onLoadedMetaData(callback, args = []) {
-        this._callbackMapper.on('loadedmetadata', callback, args);
+    onLoadedMetaData(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('loadedMetaData');
+        this._callbackMapper.on('loadedMetaData', callback, args);
         return this;
     }
 
@@ -227,9 +249,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onLoading(callback, args = []) {
+    onLoading(callback, args = [], clearExistingRegistration= false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('loading');
         this._callbackMapper.on('loading', callback, args);
         return this;
     }
@@ -240,9 +264,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onLoadedData(callback, args = []) {
+    onLoadedData(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('loadedData');
         this._callbackMapper.on('loadedData', callback, args);
         return this;
     }
@@ -255,9 +281,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onProgress(callback, args = []) {
+    onProgress(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('progress');
         this._callbackMapper.on('progress', callback, args);
         return this;
     }
@@ -268,9 +296,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onDurationChanged(callback, args = []) {
+    onDurationChanged(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('durationChanged');
         this._callbackMapper.on('durationChanged', callback, args);
         return this;
     }
@@ -280,9 +310,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onCanPlay(callback, args = []) {
+    onCanPlay(callback, args = [], clearExistingRegistration= false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('canPlay');
         this._callbackMapper.on('canPlay', callback, args);
         return this;
     }
@@ -293,9 +325,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onCanPlayTrough(callback, args = []) {
+    onCanPlayTrough(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('canPlayTrough');
         this._callbackMapper.on('canPlayTrough', callback, args);
         return this;
     }
@@ -305,9 +339,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onPlay(callback, args = []) {
+    onPlay(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('play');
         this._callbackMapper.on('play', callback, args);
         return this;
     }
@@ -317,9 +353,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onPause(callback, args = []) {
+    onPause(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('pause');
         this._callbackMapper.on('pause', callback, args);
         return this;
     }
@@ -329,9 +367,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onStopped(callback, args = []) {
+    onStopped(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('stop');
         this._callbackMapper.on('stop', callback, args);
         return this;
     }
@@ -341,9 +381,11 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onPlayProgress(callback, args = []) {
+    onPlayProgress(callback, args = [], clearExistingRegistration= false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('playProgress');
         this._callbackMapper.on('playProgress', callback, args);
         return this;
     }
@@ -353,11 +395,20 @@ export default class AudioPlayer {
      *
      * @param callback
      * @param args
+     * @param {boolean} clearExistingRegistration
      * @return AudioPlayer
      */
-    onFinish(callback, args = []) {
+    onFinish(callback, args = [], clearExistingRegistration = false) {
+        if(clearExistingRegistration) this._callbackMapper.clearCallbacksForAction('finish');
         this._callbackMapper.on('finish', callback, args);
         return this;
+    }
+
+    /**
+     * Clear all callback registrations
+     */
+    clearCallbacks() {
+        this._callbackMapper.reset();
     }
 
     /**
@@ -368,7 +419,9 @@ export default class AudioPlayer {
     _reset()
     {
         if(!this._audio) return null;
+        this._ignoreNextStop = true;
         this.stop();
+        this._ignoreNextStop = false;
         this._enableListeners(false);
     }
 
@@ -380,11 +433,12 @@ export default class AudioPlayer {
      */
     stop()
     {
-        if(!this._audio) return null;
-        this._ignoreNextPauseForStop = true; //Prevent pause event from being processed
+        if(!this._audio || !this.isPlaying()) return null;
+        this._ignoreNextPause = true; //Prevent pause event from being processed
         this._audio.pause();
         this._audio.currentTime = 0;
-        this._callbackMapper.trigger('stop')
+        if(!this._ignoreNextStop) this._callbackMapper.trigger('stop');
+        this._ignoreNextPause = false;
     }
 
     /**
@@ -423,9 +477,12 @@ export default class AudioPlayer {
     /**
      * Requests to play the sound as soon as it is loaded
      */
-    play()
+    play(reference)
     {
         if(!this._audio) return null;
+        this._ignoreNextStop = true;
+        this.stop();
+        this._ignoreNextStop = false;
         this._requestedPlay = true;
         if(this._urlLoaded) this._canPlayHandler(null); //Because the url is loaded it won't trigger the _canPlayHandler. So we do it manually. The handler will play the sound.
     }
@@ -436,7 +493,7 @@ export default class AudioPlayer {
      * @return {null}
      */
     pause() {
-        if(!this._audio) return null;
+        if(!this._audio || !this.isPlaying()) return null;
         this._audio.pause();
     }
 
@@ -480,10 +537,6 @@ export default class AudioPlayer {
      * @return {boolean}
      */
     isPlaying() {
-        return !!(this._audio
-            && this._audio.currentTime > 0
-            && !this._audio.paused
-            && !this._audio.ended
-            && this._audio.readyState > 2);
+        return this._isPlaying;
     }
 }
