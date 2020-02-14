@@ -112,6 +112,8 @@ export default class ForestGuide {
             }.bind(this), [button]).onFinish(function (refButton) {
                 refButton.classList.remove(this._config.loadingClass);
                 refButton.classList.remove(this._config.playingClass);
+                this._actionProcessor.deactivate();
+                this._audioPlayer.clearCallbacks();
             }.bind(this), [button]).onStopped(function (refButton) {
                 refButton.classList.remove(this._config.loadingClass);
                 refButton.classList.remove(this._config.playingClass);
