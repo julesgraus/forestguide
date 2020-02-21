@@ -1,6 +1,6 @@
 {
   "name": "forestguide",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "main": "dist/forestguide.js",
   "description": "Guides you narratively through an app",
   "repository": "https://github.com/julesgraus/forestguide.git",

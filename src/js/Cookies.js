@@ -18,13 +18,13 @@ export default class Cookies {
      *
      * @param {string} name
      * @param {any} value
-     * @param {int|null} days or null for "forever"
+     * @param {int|null} days or null for 30 years.
      */
     set(name, value, days = null) {
-        let date = new Date();
-        if(!days) date = new Date(8640000000000000); //maximum possible value
+        let date = new Date(Date.now());
+        if(!days) date.setUTCFullYear(date.getFullYear() + 30);
         else date.setTime(date.getTime() + (86400000  * days)); //86400000 milliseconds in a day
-        document.cookie = name + "=" + value + ";path=/;expires=" + date.toGMTString();
+        document.cookie = name + "=" + value + ";path=/;expires=" + date.toUTCString();
     }
     delete(name) { this.set(name, '', -1); }
 }
