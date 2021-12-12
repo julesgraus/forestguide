@@ -82,7 +82,7 @@ The root url is the name of the **resource folder**.
         "rootUrl": '/forestguide/',
     });
     ```
-5. Create HTMLElements like <button>'s users can press on, and give them a "data-forest-guide" attribute
+5. Create HTMLElements like button's users can press on, and give them a "data-forest-guide" attribute
 with the name of a guide (without .json and path). When users press it, that guide wil be loaded and played.
 6. Now you are ready to create a guide and let that guide users trough your app.
 
